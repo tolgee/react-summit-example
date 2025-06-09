@@ -1,46 +1,97 @@
-<p align="center">
-    <strong>🚨🚨🚨 This repo is just a dummy 🚨🚨🚨</strong><br>
-    Submit issues in the 
-    <a href="https://github.com/tolgee/tolgee-js" target="_blank"><strong>monorepo</strong></a> 
-    or 
-    <a href="https://github.com/tolgee/tolgee-js/tree/main/testapps/react" target="_blank"><strong>check the source code here</strong></a>.
-</p>
-
-# Example application of using React with Tolgee
-
 [<img src="https://raw.githubusercontent.com/tolgee/documentation/main/tolgee_logo_text.svg" alt="Tolgee" width="100" />](https://tolgee.io)
 
-This application is using VITE. To learn more about Tolgee, visit [https://tolgee.io](https://tolgee.io).
+# Tolgee Voting App
 
-## Preview
-![Tolgee Demo Example](https://github.com/user-attachments/assets/ca0d0ea0-a440-409f-a3cd-f93ef01dc197)
+A real-time voting application built with React and Node.js, showcasing the translation capabilities of [Tolgee](https://tolgee.io). This application allows users to vote and see results in real-time.
 
-## To run the app in dev mode
+Written for a React Summit 2025 with a purpose to playfully showcase the Tolgee capabilities to everyone attending the conference.
 
-To install dependencies, run:
+The code was partially created using techniques that could fall into the category "vibe coding."
+Viewer discretion is advised—code readability is substantially limited compared to usual Tolgee standards.
 
-    npm install
+## Live Demo
 
-To run the app in dev mode with in-context translating mode:
+Visit [https://vote.tolgee.io](https://vote.tolgee.io) to see the application in action.
 
-1. Create a project on [Tolgee Cloud](https://app.tolgee.io) or use
-   self-hosted [Tolgee Server](https://github.com/tolgee/server).
-2. Generate an API-KEY
-3. Copy file `.env` to `.env.development.local`
-4. Set `VITE_APP_TOLGEE_API_KEY` to API key obtained in previous step
-5. Run `npm run develop`
-6. Have fun
+## Getting Started
 
-## To run the app in production mode
+### Prerequisites
 
-To build the app for production run:
+- Node.js 16+ and npm
+- A Tolgee account and project (for translation features)
 
-    npm run build
+### Development Setup
 
-Static website will be generated. To start local server with build app, run:
+1. Clone the repository:
+   ```
+   git clone https://github.com/tolgee/react-summit-example.git
+   cd react-summit-example
+   ```
 
-    npm run preview
+2. Install dependencies for both frontend and backend:
+   ```
+   npm install
+   cd server
+   npm install
+   cd ..
+   ```
 
----
+3. Configure environment variables:
+   - Copy `.env` to `.env.development.local`
+   - Set `VITE_APP_TOLGEE_API_KEY` to your Tolgee API key
+   - Set `VITE_APP_TOLGEE_PROJECT_ID` to your Tolgee project ID
 
-This repository is automatically re-published from [Tolgee JS monorepo](https://github.com/tolgee/tolgee-js).
+   Server environment variables:
+   - `PORT`: Port for the server (default: 3001)
+   - `DATA_DIR`: Custom path for the data directory (default: './server/data')
+
+4. Start the backend server:
+   ```
+   cd server
+   npm run dev
+   ```
+
+5. In a new terminal, start the frontend development server:
+   ```
+   npm run develop
+   ```
+
+6. Open [http://localhost:5173](http://localhost:5173) in your browser
+
+### Production Deployment
+
+#### Using Docker
+
+Build and run the application using Docker:
+
+```
+docker build -t vote-app .
+docker run -p 3000:3000 -p 3001:3001 -e DATA_DIR=/app/data vote-app
+```
+
+You can mount a volume to persist the data:
+
+```
+docker run -p 3000:3000 -p 3001:3001 -e DATA_DIR=/app/data -v $(pwd)/data:/app/data vote-app
+```
+
+#### Using Kubernetes
+
+1. Update the configuration in `kubernetes/configmap.yaml` and `kubernetes/secret.yaml`
+   - The `DATA_DIR` environment variable is set to `/app/data` in the ConfigMap
+   - A persistent volume is mounted at this path
+2. Deploy to your Kubernetes cluster:
+   ```
+   kubectl apply -k kubernetes/
+   ```
+
+## Technology Stack
+
+- **Frontend**: React, Vite, Tolgee SDK
+- **Backend**: Node.js, Express, WebSockets
+- **Database**: SQLite
+- **Deployment**: Docker, Kubernetes
+
+## License
+
+This project is licensed under the MIT License—see the LICENSE file for details.

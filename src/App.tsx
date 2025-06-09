@@ -1,15 +1,13 @@
-import { Tolgee, TolgeeProvider, BackendFetch, DevTools } from '@tolgee/react';
-
-import { Todos } from './Todos';
-import { TranslationMethods } from './TranslationMethods';
+import {Tolgee, TolgeeProvider, BackendFetch, DevTools, DevBackend} from '@tolgee/react';
+import { Voting } from './Voting';
 import { FormatIcu } from '@tolgee/format-icu';
 
 const tolgee = Tolgee()
   .use(DevTools())
   .use(FormatIcu())
   .use(BackendFetch())
+  .use(DevBackend())
   .init({
-    availableLanguages: ['en', 'cs', 'fr', 'de'],
     apiUrl: import.meta.env.VITE_APP_TOLGEE_API_URL,
     apiKey: import.meta.env.VITE_APP_TOLGEE_API_KEY,
     projectId: import.meta.env.VITE_APP_TOLGEE_PROJECT_ID,
@@ -18,15 +16,9 @@ const tolgee = Tolgee()
   });
 
 export const App = () => {
-  const currentRoute = window.location.pathname;
-
   return (
     <TolgeeProvider tolgee={tolgee} options={{ useSuspense: true }}>
-      {currentRoute === '/translation-methods' ? (
-        <TranslationMethods />
-      ) : (
-        <Todos />
-      )}
+      <Voting />
     </TolgeeProvider>
   );
 };

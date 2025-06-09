@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vote-app
+  labels:
+    app: vote-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: vote-app
+  template:
+    metadata:
+      labels:
+        app: vote-app
+    spec:
+      containers:
+      - name: vote-app
+        image: ${REGISTRY_URL}/vote-app:latest
+        ports:
+        - containerPort: 3000
+          name: http
+        - containerPort: 3001
+          name: api
+        env:
+        - name: PORT
+          value: "3001"
+        - name: VITE_APP_TOLGEE_API_URL
+          valueFrom:
+            configMapKeyRef:
+              name: vote-app-config
+              key: TOLGEE_API_URL
+        - name: VITE_APP_TOLGEE_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: vote-app-secrets
+              key: TOLGEE_API_KEY
+        - name: VITE_APP_TOLGEE_PROJECT_ID
+          valueFrom:
+            configMapKeyRef:
+              name: vote-app-config
+              key: TOLGEE_PROJECT_ID
+        - name: VITE_APP_API_URL
+          value: "https://vote.tolgee.io/api"
+        - name: DATA_DIR
+          valueFrom:
+            configMapKeyRef:
+              name: vote-app-config
+              key: DATA_DIR
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+        volumeMounts:
+        - name: data-volume
+          mountPath: /app/data
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /api/options
+            port: 3001
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      volumes:
+      - name: data-volume
+        persistentVolumeClaim:
+          claimName: vote-app-data

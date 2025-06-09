@@ -1,0 +1,152 @@
+import sqlite3 from 'sqlite3';
+import path from 'path';
+import fs from 'fs';
+
+const options = [
+  'Context',
+  'Redux',
+  'Zustand',
+  'Recoil',
+  'Jotai',
+];
+
+// Determine data directory path
+const dataDir = process.env.DATA_DIR ? path.resolve(process.env.DATA_DIR) : path.join(__dirname, '../data');
+
+// Ensure data directory exists
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
+
+// Create a database instance
+const db = new sqlite3.Database(path.join(dataDir, 'votes.db'));
+
+// Promisify database operations
+const runAsync = (sql: string, params: any[] = []): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    db.run(sql, params, function(this: any, err: Error | null) {
+      if (err) return reject(err);
+      resolve({ lastID: this.lastID, changes: this.changes });
+    });
+  });
+};
+
+const allAsync = (sql: string, params: any[] = []): Promise<any[]> => {
+  return new Promise((resolve, reject) => {
+    db.all(sql, params, (err: Error | null, rows: any[]) => {
+      if (err) return reject(err);
+      resolve(rows);
+    });
+  });
+};
+
+const getAsync = (sql: string, params: any[] = []): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    db.get(sql, params, (err: Error | null, row: any) => {
+      if (err) return reject(err);
+      resolve(row);
+    });
+  });
+};
+
+// Initialize the database
+export const initDb = async () => {
+  try {
+    // Enable foreign keys
+    await runAsync('PRAGMA foreign_keys = ON');
+
+    // Create options table
+    await runAsync(`
+      CREATE TABLE IF NOT EXISTS options (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        text TEXT NOT NULL
+      ) STRICT
+    `);
+
+    // Create a unique constraint on options.text
+    await runAsync(`
+        CREATE UNIQUE INDEX IF NOT EXISTS options_text_unique_idx ON options (text)
+    `);
+
+    // Create votes table
+    await runAsync(`
+      CREATE TABLE IF NOT EXISTS votes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        option_id INTEGER NOT NULL,
+        email TEXT,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (option_id) REFERENCES options (id) ON DELETE RESTRICT
+      ) STRICT
+    `);
+
+    // Check if options exist, if not insert default options
+    for (const option of options) {
+      const exists = await getAsync('SELECT id FROM options WHERE text = ?', [option]);
+      if (!exists) {
+        await runAsync(`INSERT INTO options (text) VALUES (?)`, [option]);
+        console.log(`Option "${option}" added to database`);
+      }
+    }
+
+    console.log('Database initialized successfully');
+  } catch (error) {
+    console.error('Error initializing database:', error);
+    throw error;
+  }
+};
+
+// Get all options with vote counts
+export const getOptionsWithVotes = async () => {
+  try {
+    return await allAsync(`
+      SELECT o.id, o.text, COUNT(v.id) as votes
+      FROM options o
+      LEFT JOIN votes v ON o.id = v.option_id
+      GROUP BY o.id
+      ORDER BY votes DESC
+    `);
+  } catch (error) {
+    console.error('Error getting options with votes:', error);
+    throw error;
+  }
+};
+
+// Add a vote for an option
+export const addVote = async (optionName: string, email?: string) => {
+  try {
+    // Check if option exists
+    const option = await getAsync('SELECT id FROM options WHERE text = ?', [optionName]);
+    if (!option) {
+      throw new Error(`Option '${option}' does not exist`);
+    }
+
+    // Insert vote
+    const result = await runAsync(
+      'INSERT INTO votes (option_id, email) VALUES (?, ?)',
+      [option.id, email || null]
+    );
+
+    return { success: true, id: result.lastID, text: optionName };
+  } catch (error) {
+    console.error('Error adding vote:', error);
+    throw error;
+  }
+};
+
+// Close the database connection
+export const closeDb = () => {
+  db.close((err) => {
+    if (err) {
+      console.error('Error closing database:', err);
+    } else {
+      console.log('Database connection closed');
+    }
+  });
+};
+
+export default {
+  initDb,
+  getOptionsWithVotes,
+  addVote,
+  closeDb
+};

@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vote-app-config
+data:
+  TOLGEE_API_URL: "https://app.tolgee.io"
+  TOLGEE_PROJECT_ID: "your-project-id"
+  DATA_DIR: "/app/data"
