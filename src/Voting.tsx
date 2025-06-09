@@ -21,38 +21,83 @@ export const Voting = () => {
   // API URL from environment variables
   const apiUrl = import.meta.env.VITE_APP_API_URL || 'http://localhost:3001';
 
-  // Connect to WebSocket for live updates
+  // Connect to WebSocket for live updates with reconnection logic
   useEffect(() => {
-    const ws = new WebSocket(`ws://${apiUrl.replace(/^https?:\/\//, '')}`);
+    let ws: WebSocket | null = null;
+    let reconnectTimeout: number | null = null;
+    let reconnectAttempts = 0;
+    const maxReconnectAttempts = 5;
+    const baseReconnectDelay = 1000; // Start with 1 second delay
 
-    ws.onopen = () => {
-      console.log('Connected to WebSocket server');
-    };
+    const connect = () => {
+      // Determine if we should use secure WebSocket (wss) based on the current protocol
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${protocol}//${apiUrl.replace(/^https?:\/\//, '')}`;
 
-    ws.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        if (data.type === 'options') {
-          setOptions(data.data);
-          setTotalVotes(data.data.reduce((sum: number, option: Option) => sum + option.votes, 0));
+      ws = new WebSocket(wsUrl);
+
+      ws.onopen = () => {
+        console.log('Connected to WebSocket server');
+        // Reset reconnect attempts on successful connection
+        reconnectAttempts = 0;
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.type === 'options') {
+            setOptions(data.data);
+            setTotalVotes(data.data.reduce((sum: number, option: Option) => sum + option.votes, 0));
+          }
+        } catch (error) {
+          console.error('Error parsing WebSocket message:', error);
         }
-      } catch (error) {
-        console.error('Error parsing WebSocket message:', error);
-      }
+      };
+
+      ws.onerror = (error) => {
+        console.error('WebSocket error:', error);
+        // Fallback to polling if WebSocket fails
+        fetchOptions();
+      };
+
+      ws.onclose = (event) => {
+        console.log(`WebSocket closed with code ${event.code}. Reason: ${event.reason}`);
+
+        // Don't attempt to reconnect if the component is unmounting or max attempts reached
+        if (reconnectAttempts >= maxReconnectAttempts) {
+          console.log(`Maximum reconnect attempts (${maxReconnectAttempts}) reached. Giving up.`);
+          return;
+        }
+
+        // Calculate exponential backoff delay
+        const delay = Math.min(
+          baseReconnectDelay * Math.pow(2, reconnectAttempts),
+          30000 // Max delay of 30 seconds
+        );
+
+        console.log(`Attempting to reconnect in ${delay}ms (attempt ${reconnectAttempts + 1}/${maxReconnectAttempts})...`);
+
+        reconnectTimeout = window.setTimeout(() => {
+          reconnectAttempts++;
+          connect();
+        }, delay);
+      };
     };
 
-    ws.onerror = (error) => {
-      console.error('WebSocket error:', error);
-      // Fallback to polling if WebSocket fails
-      fetchOptions();
-    };
+    connect();
 
-    ws.onclose = () => {
-      console.log('Disconnected from WebSocket server');
-    };
-
+    // Cleanup function
     return () => {
-      ws.close();
+      if (ws) {
+        // Prevent reconnection attempts when component unmounts
+        ws.onclose = null;
+        ws.close();
+      }
+
+      // Clear any pending reconnect timeouts
+      if (reconnectTimeout !== null) {
+        clearTimeout(reconnectTimeout);
+      }
     };
   }, [apiUrl]);
 
@@ -78,7 +123,7 @@ export const Voting = () => {
   // Submit vote
   const onVote = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     if (!selectedOption) {
       setError(t({
         key: 'error-no-option-selected',
