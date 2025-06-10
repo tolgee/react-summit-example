@@ -463,7 +463,13 @@ header h1 {
 .qr-code {
   display: flex;
   justify-content: center;
-  margin-top: 10px;
+  margin: 20px auto;
+  padding: 15px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: fit-content;
+  border: 1px solid #eee;
 }
 
 .repo-link {
