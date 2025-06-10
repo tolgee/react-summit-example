@@ -70,7 +70,7 @@ export const Voting = () => {
           <div className="email-input">
             <label htmlFor="email">
               <T keyName="email-label">
-                Email (optional - to participate in the raffle):
+                Email:
               </T>
             </label>
             <input
@@ -80,9 +80,19 @@ export const Voting = () => {
               onChange={(e) => setEmail(e.target.value)}
               placeholder={t({
                 key: 'email-placeholder',
-                defaultValue: 'your@email.com',
+                defaultValue: 'your@email.com (optional)',
               })}
             />
+            <span>
+              <T keyName="email-hint-1">
+                We’ll use your email to let you know if you win the raffle! Plus, everyone who enters will get a discount code for the Tolgee Cloud plan.
+              </T>
+            </span>
+            <span>
+              <T keyName="email-hint-2">
+                Not into sharing your email? No worries — you can still vote, but you won’t be entered into the raffle.
+              </T>
+            </span>
           </div>
 
           <button

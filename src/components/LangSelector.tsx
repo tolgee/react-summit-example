@@ -79,11 +79,19 @@ export const LangSelector: React.FC = () => {
           </option>
         ))
       ) : (
-        <option value={tolgee.getPendingLanguage()}>
-          {loading ?
-            t("lang-selector-loading", "Loading languages...") :
-            t("lang-selector-failed", "Whoops! Y’all hammered our servers so hard, all the languages ran off.")}
-        </option>
+        <>
+          <option value="en">
+            🇬🇧 English
+          </option>
+          {tolgee.getPendingLanguage() !== 'en' && (
+            <option value={tolgee.getPendingLanguage()}>{tolgee.getPendingLanguage()}</option>
+          )}
+          <option value="none" disabled>
+            {loading  ?
+              t("lang-selector-loading", "Loading languages...") :
+              t("lang-selector-failed", "Whoops! Y’all hammered our servers so hard, all the languages ran off.")}
+          </option>
+        </>
       )}
     </select>
   );
