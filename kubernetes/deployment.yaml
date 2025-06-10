@@ -18,13 +18,13 @@ spec:
       - name: vote-app
         image: ${REGISTRY_URL}/vote-app:latest
         ports:
-        - containerPort: 3000
+        - containerPort: 80
           name: http
-        - containerPort: 3001
-          name: api
         env:
         - name: PORT
-          value: "3001"
+          value: "80"
+        - name: NODE_ENV
+          value: "production"
         - name: VITE_APP_TOLGEE_API_URL
           valueFrom:
             configMapKeyRef:
@@ -65,13 +65,13 @@ spec:
         livenessProbe:
           httpGet:
             path: /
-            port: 3000
+            port: 80
           initialDelaySeconds: 30
           periodSeconds: 10
         readinessProbe:
           httpGet:
             path: /api/options
-            port: 3001
+            port: 80
           initialDelaySeconds: 5
           periodSeconds: 5
       volumes:

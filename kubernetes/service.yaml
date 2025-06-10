@@ -7,11 +7,8 @@ metadata:
 spec:
   ports:
   - port: 80
-    targetPort: 3000
+    targetPort: 80
     name: http
-  - port: 3001
-    targetPort: 3001
-    name: api
   selector:
     app: vote-app
   type: ClusterIP

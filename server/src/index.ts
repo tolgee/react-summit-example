@@ -5,9 +5,11 @@ import path from 'path';
 import { initDb, getOptionsWithVotes, addVote, closeDb } from './db';
 import { initWebSocket, broadcastOptions } from './websocket';
 import { logger } from './logger';
+import fs from 'fs';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const isProduction = process.env.NODE_ENV === 'production';
 
 app.use(cors());
 app.use(express.json());
@@ -50,6 +52,28 @@ app.post('/api/vote', async (req, res) => {
     res.status(500).json({ error: 'Failed to add vote' });
   }
 });
+
+const frontendBuildPath = path.resolve(__dirname, '../../dist');
+
+function serveFrontend() {
+  if (!fs.existsSync(frontendBuildPath)) {
+    logger.warn(`Frontend build directory not found at: ${frontendBuildPath}`);
+    return;
+  }
+  logger.info(`Serving frontend static files from: ${frontendBuildPath}`);
+  app.use(express.static(frontendBuildPath));
+  app.get('*', (req, res) => {
+    if (req.path.startsWith('/api/')) {
+      res.status(404).json({ error: 'API endpoint not found' });
+      return;
+    }
+    res.sendFile(path.join(frontendBuildPath, 'index.html'));
+  });
+}
+
+if (isProduction) {
+  serveFrontend();
+}
 
 server.listen(PORT, () => {
   logger.info(`Server running on port ${PORT}`);

@@ -59,6 +59,8 @@ Visit [https://vote.tolgee.io](https://vote.tolgee.io) to see the application in
 
 6. Open [http://localhost:5173](http://localhost:5173) in your browser
 
+Note: In development mode, the frontend and backend run separately on different ports. In production, the Node.js server serves both the API and the frontend static files on the same port.
+
 ### Production Deployment
 
 #### Using Docker
@@ -67,14 +69,16 @@ Build and run the application using Docker:
 
 ```
 docker build -t vote-app .
-docker run -p 3000:3000 -p 3001:3001 -e DATA_DIR=/app/data vote-app
+docker run -p 80:80 -e DATA_DIR=/app/data vote-app
 ```
 
 You can mount a volume to persist the data:
 
 ```
-docker run -p 3000:3000 -p 3001:3001 -e DATA_DIR=/app/data -v $(pwd)/data:/app/data vote-app
+docker run -p 80:80 -e DATA_DIR=/app/data -v $(pwd)/data:/app/data vote-app
 ```
+
+The Docker image runs the Node.js server on port 80, which serves both the API and the frontend static files.
 
 #### Using Kubernetes
 

@@ -31,12 +31,8 @@ COPY --from=frontend-build /app/dist ./dist
 # Create data directory for SQLite
 RUN mkdir -p /app/server/data
 
-# Install a simple static file server
-RUN npm install -g serve
+# Expose port 80 for the server
+EXPOSE 80
 
-# Expose ports for API and frontend
-EXPOSE 3001
-EXPOSE 3000
-
-# Start both the server and frontend
-CMD ["sh", "-c", "cd server && node dist/index.js & serve -s ../dist -l 3000"]
+# Start the server only (it will serve the frontend)
+CMD ["sh", "-c", "cd server && PORT=80 NODE_ENV=production node dist/index.js"]

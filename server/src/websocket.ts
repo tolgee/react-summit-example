@@ -31,7 +31,6 @@ export const initWebSocket = (server: http.Server) => {
   });
 
   setInterval(logConnectedUsers, 10 * 60 * 1000);
-  logConnectedUsers();
 
   logger.info('WebSocket server initialized');
 };
