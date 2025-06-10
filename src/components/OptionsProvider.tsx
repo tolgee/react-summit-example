@@ -68,7 +68,7 @@ export const OptionsProvider = ({ children }: OptionsProviderProps) => {
 
     const connect = () => {
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const wsUrl = `${protocol}//${apiUrl.replace(/^https?:\/\//, '')}`;
+      const wsUrl = `${protocol}//${apiUrl.replace(/^https?:\/\//, '')}/api/ws`;
 
       ws = new WebSocket(wsUrl);
 

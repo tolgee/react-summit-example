@@ -16,7 +16,10 @@ const logConnectedUsers = () => {
 };
 
 export const initWebSocket = (server: http.Server) => {
-  wss = new WebSocket.Server({ server });
+  wss = new WebSocket.Server({
+    server,
+    path: '/api/ws'
+  });
 
   wss.on('connection', (ws) => {
     sendOptionsToClient(ws);
