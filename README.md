@@ -100,7 +100,6 @@ The Docker image runs the Node.js server on port 80, which serves both the API a
 1. Update the configuration in `kubernetes/configmap.yaml` and `kubernetes/secret.yaml`
    - The `DATA_DIR` environment variable is set to `/app/data` in the ConfigMap
    - The `APP_URL` environment variable is set to your application URL (default: 'https://vote.tolgee.io')
-   - The `API_URL` environment variable is set to your API URL (default: 'https://vote.tolgee.io/api')
    - A persistent volume is mounted at the data path
 2. Deploy to your Kubernetes cluster:
    ```

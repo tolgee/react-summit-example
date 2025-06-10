@@ -59,16 +59,14 @@ export const OptionsProvider = ({ children }: OptionsProviderProps) => {
     }
   }, []);
 
-  const apiUrl = import.meta.env.VITE_APP_API_URL || 'http://localhost:3001';
-
   useEffect(() => {
     let ws: WebSocket | null = null;
     let reconnectTimeout: number | null = null;
     const reconnectDelay = 10000;
 
     const connect = () => {
-      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const wsUrl = `${protocol}//${apiUrl.replace(/^https?:\/\//, '')}/api/ws`;
+      const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${wsProtocol}//${window.location.host}/api/ws`;
 
       ws = new WebSocket(wsUrl);
 
@@ -112,7 +110,7 @@ export const OptionsProvider = ({ children }: OptionsProviderProps) => {
         clearTimeout(reconnectTimeout);
       }
     };
-  }, [apiUrl]);
+  }, []);
 
   const handleFetchError = (error: any) => {
     console.error('Error fetching options:', error);
@@ -124,7 +122,7 @@ export const OptionsProvider = ({ children }: OptionsProviderProps) => {
 
   const fetchOptions = async () => {
     try {
-      const response = await fetch(`${apiUrl}/api/options`);
+      const response = await fetch(`/api/options`);
       if (!response.ok) {
         handleFetchError(response);
         return;
@@ -160,7 +158,7 @@ export const OptionsProvider = ({ children }: OptionsProviderProps) => {
     setErrorSubmit(null);
 
     try {
-      const response = await fetch(`${apiUrl}/api/vote`, {
+      const response = await fetch(`/api/vote`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -7,4 +7,3 @@ data:
   TOLGEE_PROJECT_ID: "your-project-id"
   DATA_DIR: "/app/data"
   APP_URL: "https://vote.tolgee.io"
-  API_URL: "https://vote.tolgee.io/api"
