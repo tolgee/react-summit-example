@@ -161,6 +161,7 @@ describe('Module or Function Name', () => {
 - Strict type checking is enabled
 - Use explicit type annotations for function parameters and return types
 - Use interfaces for complex object types
+- Avoid unnecessary comments and too chatty code—the code will be read only by experienced developers
 
 ### Backend (Node.js/Express)
 
