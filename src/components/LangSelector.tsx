@@ -82,7 +82,7 @@ export const LangSelector: React.FC = () => {
         <option value={tolgee.getPendingLanguage()}>
           {loading ?
             t("lang-selector-loading", "Loading languages...") :
-            t("lang-selector-failed", "Whoops! Y’all hammered our servers harder than a Texas BBQ — no languages for now!")}
+            t("lang-selector-failed", "Whoops! Y’all hammered our servers so hard, all the languages ran off.")}
         </option>
       )}
     </select>

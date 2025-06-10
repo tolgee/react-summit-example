@@ -15,7 +15,7 @@ export const SuccessPopup = ({ show }: SuccessPopupProps) => {
         </h3>
         <p>
           <T keyName="vote-success-message">
-            Thank you for your vote. You can watch the results grow.
+            Your vote's in! Sit back, watch the graphs do their thing, and have a great time at React Summit 2025!
           </T>
         </p>
       </div>
