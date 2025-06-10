@@ -16,6 +16,7 @@ interface OptionsContextType {
   isSubmitting: boolean;
   errorSubmit: string | null;
   setErrorSubmit: (error: string | null) => void;
+  leaderboard: boolean;
 }
 
 const OptionsContext = createContext<OptionsContextType | undefined>(undefined);
@@ -40,11 +41,21 @@ export const OptionsProvider = ({ children }: OptionsProviderProps) => {
   const [userVote, setUserVote] = useState<string | null>(null);
   const [errorFetch, setErrorFetch] = useState<string | null>(null);
   const [errorSubmit, setErrorSubmit] = useState<string | null>(null);
+  const [leaderboard, setLeaderboard] = useState(false);
 
   useEffect(() => {
     const savedVote = localStorage.getItem('userVote');
     if (savedVote) {
       setUserVote(savedVote);
+    }
+  }, []);
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const showLeaderboard = urlParams.get('leaderboard') === 'true';
+
+    if (showLeaderboard) {
+      setLeaderboard(true);
     }
   }, []);
 
@@ -181,6 +192,7 @@ export const OptionsProvider = ({ children }: OptionsProviderProps) => {
     isSubmitting,
     errorSubmit,
     setErrorSubmit,
+    leaderboard,
   };
 
   return (

@@ -14,14 +14,15 @@ export const Voting = () => {
     errorSubmit, 
     userVote, 
     submitVote, 
-    isSubmitting 
+    isSubmitting,
+    leaderboard
   } = useOptions();
 
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [email, setEmail] = useState('');
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
-  const hasVoted = userVote !== null;
+  const hasVoted = userVote !== null || leaderboard;
 
   // Set initial selected option based on user's previous vote
   useEffect(() => {
@@ -58,7 +59,7 @@ export const Voting = () => {
           <VotingItem
             key={option.text}
             option={option}
-            selected={selectedOption === option.text}
+            selected={!leaderboard && selectedOption === option.text}
             onSelect={setSelectedOption}
           />
         ))}

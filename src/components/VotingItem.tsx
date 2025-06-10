@@ -8,9 +8,9 @@ interface VotingItemProps {
 }
 
 export const VotingItem = ({ option, selected, onSelect }: VotingItemProps) => {
-  const { totalVotes, userVote } = useOptions();
-  const isUserVote = userVote === option.text;
-  const hasVoted = userVote !== null;
+  const { totalVotes, userVote, leaderboard } = useOptions();
+  const isUserVote = !leaderboard && userVote === option.text;
+  const hasVoted = userVote !== null || leaderboard;
 
   return (
     <div
