@@ -66,16 +66,30 @@ Note: In development mode, the frontend and backend run separately on different 
 
 #### Using Docker
 
-Build and run the application using Docker:
+You can use the provided scripts to build and deploy the application:
 
+```bash
+# Build the Docker image
+./build.sh
+
+# Deploy the Docker container
+./deploy.sh
 ```
+
+The `build.sh` script builds a Docker image named `localhost/tolgee/vote-app:latest` and passes all environment variables from your `.env` file to the build process.
+
+The `deploy.sh` script runs the Docker container, maps port 80, and mounts the `server/data` directory to persist data.
+
+Alternatively, you can manually build and run the application:
+
+```bash
 docker build -t vote-app .
 docker run -p 80:80 -e DATA_DIR=/app/data -e VITE_APP_URL=https://your-domain.com vote-app
 ```
 
 You can mount a volume to persist the data:
 
-```
+```bash
 docker run -p 80:80 -e DATA_DIR=/app/data -e VITE_APP_URL=https://your-domain.com -v $(pwd)/data:/app/data vote-app
 ```
 
