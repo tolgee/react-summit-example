@@ -2,11 +2,14 @@ import { Tolgee, TolgeeProvider, BackendFetch, DevTools, DevBackend } from '@tol
 import { FormatIcu } from '@tolgee/format-icu';
 import { Title } from "./Title.tsx";
 import { Page } from './components/Page';
+import { LoadingScreen } from './components/LoadingScreen';
 
 const tolgee = Tolgee()
   .use(DevTools())
   .use(FormatIcu())
-  .use(BackendFetch())
+  // .use(BackendFetch({
+  //   prefix: import.meta.env.VITE_APP_TOLGEE_CDN_URL,
+  // }))
   .use(DevBackend())
   .init({
     apiUrl: import.meta.env.VITE_APP_TOLGEE_API_URL,
@@ -18,7 +21,11 @@ const tolgee = Tolgee()
 
 export const App = () => {
   return (
-    <TolgeeProvider tolgee={tolgee} options={{ useSuspense: true }}>
+    <TolgeeProvider
+      tolgee={tolgee}
+      options={{ useSuspense: true }}
+      fallback={<LoadingScreen />}
+    >
       <Title />
       <Page />
     </TolgeeProvider>
