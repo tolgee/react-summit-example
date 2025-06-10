@@ -492,3 +492,35 @@ header h1 {
 .repo-link a:hover {
   text-decoration: underline;
 }
+
+/* Local Loading Component Styles */
+.local-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 0;
+  min-height: 200px;
+}
+
+.local-loading .loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.local-loading .loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(64, 121, 236, 0.3);
+  border-radius: 50%;
+  border-top-color: #4079ec;
+  animation: spin 1s ease-in-out infinite;
+}
+
+.local-loading .loading-text {
+  font-size: 1.2rem;
+  color: #1f385b;
+  font-weight: 300;
+  letter-spacing: 1px;
+}

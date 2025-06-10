@@ -9,9 +9,9 @@ const savedLocale = localStorage.getItem('userLocale') || undefined;
 const tolgee = Tolgee()
   .use(DevTools())
   .use(FormatIcu())
-  // .use(BackendFetch({
-  //   prefix: import.meta.env.VITE_APP_TOLGEE_CDN_URL,
-  // }))
+  .use(BackendFetch({
+    prefix: import.meta.env.VITE_APP_TOLGEE_CDN_URL,
+  }))
   .use(DevBackend())
   .init({
     apiUrl: import.meta.env.VITE_APP_TOLGEE_API_URL,

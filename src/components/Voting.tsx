@@ -5,6 +5,7 @@ import { VotingItem } from './VotingItem';
 import { ShareButton } from './ShareButton';
 import { SuccessPopup } from './SuccessPopup';
 import { RepoLink } from "./RepoLink.tsx";
+import { LocalLoadingComponent } from './LocalLoadingComponent';
 
 export const Voting = () => {
   const { t } = useTranslate();
@@ -54,16 +55,20 @@ export const Voting = () => {
 
       <SuccessPopup show={showSuccessPopup} />
 
-      <div className="options-list">
-        {options.map((option) => (
-          <VotingItem
-            key={option.text}
-            option={option}
-            selected={!leaderboard && selectedOption === option.text}
-            onSelect={setSelectedOption}
-          />
-        ))}
-      </div>
+      {options.length === 0 && !errorFetch ? (
+        <LocalLoadingComponent />
+      ) : (
+        <div className="options-list">
+          {options.map((option) => (
+            <VotingItem
+              key={option.text}
+              option={option}
+              selected={!leaderboard && selectedOption === option.text}
+              onSelect={setSelectedOption}
+            />
+          ))}
+        </div>
+      )}
 
       {!hasVoted && (
         <form className="voting-form" onSubmit={onVote}>
