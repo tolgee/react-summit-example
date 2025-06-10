@@ -1,6 +1,7 @@
 import sqlite3 from 'sqlite3';
 import path from 'path';
 import fs from 'fs';
+import { logger } from './logger';
 
 const options = [
   'option-redux',
@@ -76,13 +77,13 @@ export const initDb = async () => {
       const exists = await getAsync('SELECT id FROM options WHERE text = ?', [option]);
       if (!exists) {
         await runAsync(`INSERT INTO options (text) VALUES (?)`, [option]);
-        console.log(`Option "${option}" added to database`);
+        logger.info(`Option "${option}" added to database`);
       }
     }
 
-    console.log('Database initialized successfully');
+    logger.info('Database initialized successfully');
   } catch (error) {
-    console.error('Error initializing database:', error);
+    logger.error('Error initializing database:', error);
     throw error;
   }
 };
@@ -97,7 +98,7 @@ export const getOptionsWithVotes = async () => {
       ORDER BY votes DESC
     `);
   } catch (error) {
-    console.error('Error getting options with votes:', error);
+    logger.error('Error getting options with votes:', error);
     throw error;
   }
 };
@@ -116,7 +117,7 @@ export const addVote = async (optionName: string, email?: string) => {
 
     return { success: true, id: result.lastID, text: optionName };
   } catch (error) {
-    console.error('Error adding vote:', error);
+    logger.error('Error adding vote:', error);
     throw error;
   }
 };
@@ -124,9 +125,9 @@ export const addVote = async (optionName: string, email?: string) => {
 export const closeDb = () => {
   db.close((err) => {
     if (err) {
-      console.error('Error closing database:', err);
+      logger.error('Error closing database:', err);
     } else {
-      console.log('Database connection closed');
+      logger.info('Database connection closed');
     }
   });
 };

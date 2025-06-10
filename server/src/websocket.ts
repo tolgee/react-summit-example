@@ -1,17 +1,18 @@
 import WebSocket from 'ws';
 import http from 'http';
 import { getOptionsWithVotes } from './db';
+import { logger } from './logger';
 
 let wss: WebSocket.Server;
 
 const logConnectedUsers = () => {
   if (!wss) {
-    console.error('WebSocket server not yet initialized');
+    logger.error('WebSocket server not yet initialized');
     return;
   }
 
   const connectedUsers = wss.clients.size;
-  console.log(`Number of users currently connected: ${connectedUsers}`);
+  logger.info(`Number of users currently connected: ${connectedUsers}`);
 };
 
 export const initWebSocket = (server: http.Server) => {
@@ -21,7 +22,7 @@ export const initWebSocket = (server: http.Server) => {
     sendOptionsToClient(ws);
 
     ws.on('error', (error) => {
-      console.error('WebSocket error:', error);
+      logger.error('WebSocket error:', error);
     });
 
     ws.on('close', () => {
@@ -32,7 +33,7 @@ export const initWebSocket = (server: http.Server) => {
   setInterval(logConnectedUsers, 10 * 60 * 1000);
   logConnectedUsers();
 
-  console.log('WebSocket server initialized');
+  logger.info('WebSocket server initialized');
 };
 
 export const sendOptionsToClient = async (ws: WebSocket) => {
@@ -40,13 +41,13 @@ export const sendOptionsToClient = async (ws: WebSocket) => {
     const options = await getOptionsWithVotes();
     ws.send(JSON.stringify({ type: 'options', data: options }));
   } catch (error) {
-    console.error('Error sending options to client:', error);
+    logger.error('Error sending options to client:', error);
   }
 };
 
 export const broadcastOptions = async () => {
   if (!wss) {
-    console.error('WebSocket server not initialized');
+    logger.error('WebSocket server not initialized');
     return;
   }
 
@@ -60,7 +61,7 @@ export const broadcastOptions = async () => {
       }
     });
   } catch (error) {
-    console.error('Error broadcasting options:', error);
+    logger.error('Error broadcasting options:', error);
   }
 };
 
