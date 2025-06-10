@@ -4,6 +4,8 @@ import { Title } from "./Title.tsx";
 import { Page } from './components/Page';
 import { LoadingScreen } from './components/LoadingScreen';
 
+const savedLocale = localStorage.getItem('userLocale') || undefined;
+
 const tolgee = Tolgee()
   .use(DevTools())
   .use(FormatIcu())
@@ -17,6 +19,7 @@ const tolgee = Tolgee()
     projectId: import.meta.env.VITE_APP_TOLGEE_PROJECT_ID,
     fallbackLanguage: 'en',
     defaultLanguage: 'en',
+    language: savedLocale,
   });
 
 export const App = () => {

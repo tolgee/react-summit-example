@@ -65,7 +65,11 @@ export const LangSelector: React.FC = () => {
   return (
     <select
       className="lang-selector"
-      onChange={(e) => tolgee.changeLanguage(e.target.value)}
+      onChange={(e) => {
+        const selectedLang = e.target.value;
+        localStorage.setItem('userLocale', selectedLang);
+        tolgee.changeLanguage(selectedLang);
+      }}
       value={tolgee.getPendingLanguage()}
     >
       {languages.length > 0 ? (
