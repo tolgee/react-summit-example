@@ -28,6 +28,11 @@ export const VotingItem = ({ option, selected, onSelect }: VotingItemProps) => {
               onChange={() => onSelect(option.text)}
             />
           )}
+          <img
+            src={`/img/${option.text}.svg`}
+            alt={option.text}
+            className="option-icon"
+          />
           <label htmlFor={`option-${option.text}`}>
             <T keyName={option.text}>
               {option.text.replace('option-', '').split('-').map(word => 

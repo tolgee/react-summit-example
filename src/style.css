@@ -332,6 +332,12 @@ header h1 {
   font-weight: 500;
 }
 
+.option-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
 .option-votes {
   color: #666;
   font-weight: 500;
