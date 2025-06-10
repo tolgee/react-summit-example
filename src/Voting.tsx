@@ -25,9 +25,7 @@ export const Voting = () => {
   useEffect(() => {
     let ws: WebSocket | null = null;
     let reconnectTimeout: number | null = null;
-    let reconnectAttempts = 0;
-    const maxReconnectAttempts = 5;
-    const baseReconnectDelay = 1000; // Start with 1 second delay
+    const reconnectDelay = 10000; // Fixed 10 second delay
 
     const connect = () => {
       // Determine if we should use secure WebSocket (wss) based on the current protocol
@@ -38,8 +36,6 @@ export const Voting = () => {
 
       ws.onopen = () => {
         console.log('Connected to WebSocket server');
-        // Reset reconnect attempts on successful connection
-        reconnectAttempts = 0;
       };
 
       ws.onmessage = (event) => {
@@ -62,25 +58,11 @@ export const Voting = () => {
 
       ws.onclose = (event) => {
         console.log(`WebSocket closed with code ${event.code}. Reason: ${event.reason}`);
-
-        // Don't attempt to reconnect if the component is unmounting or max attempts reached
-        if (reconnectAttempts >= maxReconnectAttempts) {
-          console.log(`Maximum reconnect attempts (${maxReconnectAttempts}) reached. Giving up.`);
-          return;
-        }
-
-        // Calculate exponential backoff delay
-        const delay = Math.min(
-          baseReconnectDelay * Math.pow(2, reconnectAttempts),
-          30000 // Max delay of 30 seconds
-        );
-
-        console.log(`Attempting to reconnect in ${delay}ms (attempt ${reconnectAttempts + 1}/${maxReconnectAttempts})...`);
+        console.log(`Attempting to reconnect in ${reconnectDelay/1000}s...`);
 
         reconnectTimeout = window.setTimeout(() => {
-          reconnectAttempts++;
           connect();
-        }, delay);
+        }, reconnectDelay);
       };
     };
 
