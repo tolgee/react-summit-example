@@ -40,6 +40,7 @@ Visit [https://vote.tolgee.io](https://vote.tolgee.io) to see the application in
    - Copy `.env` to `.env.development.local`
    - Set `VITE_APP_TOLGEE_API_KEY` to your Tolgee API key
    - Set `VITE_APP_TOLGEE_PROJECT_ID` to your Tolgee project ID
+   - Set `VITE_APP_TOLGEE_CDN_URL` to your Tolgee CDN url prefix
 
    Server environment variables:
    - `PORT`: Port for the server (default: 3001)
