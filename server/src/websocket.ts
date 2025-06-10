@@ -4,11 +4,20 @@ import { getOptionsWithVotes } from './db';
 
 let wss: WebSocket.Server;
 
+const logConnectedUsers = () => {
+  if (!wss) {
+    console.error('WebSocket server not yet initialized');
+    return;
+  }
+
+  const connectedUsers = wss.clients.size;
+  console.log(`Number of users currently connected: ${connectedUsers}`);
+};
+
 export const initWebSocket = (server: http.Server) => {
   wss = new WebSocket.Server({ server });
 
   wss.on('connection', (ws) => {
-    console.log('Client connected');
     sendOptionsToClient(ws);
 
     ws.on('error', (error) => {
@@ -16,9 +25,12 @@ export const initWebSocket = (server: http.Server) => {
     });
 
     ws.on('close', () => {
-      console.log('Client disconnected');
+      // Nothing
     });
   });
+
+  setInterval(logConnectedUsers, 10 * 60 * 1000);
+  logConnectedUsers();
 
   console.log('WebSocket server initialized');
 };
