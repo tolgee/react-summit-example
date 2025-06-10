@@ -1,7 +1,7 @@
 import { Tolgee, TolgeeProvider, BackendFetch, DevTools, DevBackend } from '@tolgee/react';
-import { Voting } from './Voting';
 import { FormatIcu } from '@tolgee/format-icu';
 import { Title } from "./Title.tsx";
+import { Page } from './components/Page';
 
 const tolgee = Tolgee()
   .use(DevTools())
@@ -20,7 +20,7 @@ export const App = () => {
   return (
     <TolgeeProvider tolgee={tolgee} options={{ useSuspense: true }}>
       <Title />
-      <Voting />
+      <Page />
     </TolgeeProvider>
   );
 };
