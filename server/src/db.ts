@@ -3,25 +3,23 @@ import path from 'path';
 import fs from 'fs';
 
 const options = [
-  'Context',
-  'Redux',
-  'Zustand',
-  'Recoil',
-  'Jotai',
+  'option-redux',
+  'option-zustand',
+  'option-jotai',
+  'option-context-api',
+  'option-mobx',
+  'option-no-global-state',
+  'option-dont-care',
 ];
 
-// Determine data directory path
 const dataDir = process.env.DATA_DIR ? path.resolve(process.env.DATA_DIR) : path.join(__dirname, '../data');
 
-// Ensure data directory exists
 if (!fs.existsSync(dataDir)) {
   fs.mkdirSync(dataDir, { recursive: true });
 }
 
-// Create a database instance
 const db = new sqlite3.Database(path.join(dataDir, 'votes.db'));
 
-// Promisify database operations
 const runAsync = (sql: string, params: any[] = []): Promise<any> => {
   return new Promise((resolve, reject) => {
     db.run(sql, params, function(this: any, err: Error | null) {
@@ -49,13 +47,10 @@ const getAsync = (sql: string, params: any[] = []): Promise<any> => {
   });
 };
 
-// Initialize the database
 export const initDb = async () => {
   try {
-    // Enable foreign keys
     await runAsync('PRAGMA foreign_keys = ON');
 
-    // Create options table
     await runAsync(`
       CREATE TABLE IF NOT EXISTS options (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -63,12 +58,10 @@ export const initDb = async () => {
       ) STRICT
     `);
 
-    // Create a unique constraint on options.text
     await runAsync(`
-        CREATE UNIQUE INDEX IF NOT EXISTS options_text_unique_idx ON options (text)
+      CREATE UNIQUE INDEX IF NOT EXISTS options_text_unique_idx ON options (text)
     `);
 
-    // Create votes table
     await runAsync(`
       CREATE TABLE IF NOT EXISTS votes (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -79,7 +72,6 @@ export const initDb = async () => {
       ) STRICT
     `);
 
-    // Check if options exist, if not insert default options
     for (const option of options) {
       const exists = await getAsync('SELECT id FROM options WHERE text = ?', [option]);
       if (!exists) {
@@ -95,7 +87,6 @@ export const initDb = async () => {
   }
 };
 
-// Get all options with vote counts
 export const getOptionsWithVotes = async () => {
   try {
     return await allAsync(`
@@ -111,16 +102,13 @@ export const getOptionsWithVotes = async () => {
   }
 };
 
-// Add a vote for an option
 export const addVote = async (optionName: string, email?: string) => {
   try {
-    // Check if option exists
     const option = await getAsync('SELECT id FROM options WHERE text = ?', [optionName]);
     if (!option) {
       throw new Error(`Option '${option}' does not exist`);
     }
 
-    // Insert vote
     const result = await runAsync(
       'INSERT INTO votes (option_id, email) VALUES (?, ?)',
       [option.id, email || null]
@@ -133,7 +121,6 @@ export const addVote = async (optionName: string, email?: string) => {
   }
 };
 
-// Close the database connection
 export const closeDb = () => {
   db.close((err) => {
     if (err) {

@@ -4,14 +4,11 @@ import { getOptionsWithVotes } from './db';
 
 let wss: WebSocket.Server;
 
-// Initialize WebSocket server
 export const initWebSocket = (server: http.Server) => {
   wss = new WebSocket.Server({ server });
 
   wss.on('connection', (ws) => {
     console.log('Client connected');
-
-    // Send initial data to the client
     sendOptionsToClient(ws);
 
     ws.on('error', (error) => {
@@ -26,7 +23,6 @@ export const initWebSocket = (server: http.Server) => {
   console.log('WebSocket server initialized');
 };
 
-// Send options with votes to a specific client
 export const sendOptionsToClient = async (ws: WebSocket) => {
   try {
     const options = await getOptionsWithVotes();
@@ -36,7 +32,6 @@ export const sendOptionsToClient = async (ws: WebSocket) => {
   }
 };
 
-// Broadcast options with votes to all connected clients
 export const broadcastOptions = async () => {
   if (!wss) {
     console.error('WebSocket server not initialized');

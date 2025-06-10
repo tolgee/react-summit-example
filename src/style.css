@@ -242,3 +242,158 @@ header h1 {
   top: 30px;
   color: white;
 }
+
+/* Voting page styles */
+.question {
+  color: #1f385b;
+  text-align: center;
+  margin: 20px 0;
+  font-size: 24px;
+}
+
+.options-list {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.option-item {
+  background-color: white;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.option-item.selected {
+  background-color: #f0f7ff;
+}
+
+.option-item.user-vote {
+  background-color: #e6f2ff;
+  border: 2px solid #4079ec;
+}
+
+.option-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.option-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #333;
+  font-weight: 500;
+}
+
+.option-votes {
+  color: #666;
+  font-weight: 500;
+}
+
+.result-bar-container {
+  width: 100%;
+  height: 10px;
+  background-color: #eee;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.result-bar {
+  height: 100%;
+  background-color: #4079ec;
+  border-radius: 5px;
+  transition: width 0.5s ease-in-out;
+}
+
+.voting-form {
+  padding: 0 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.email-input {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.email-input label {
+  color: #333;
+  font-weight: 500;
+}
+
+.email-input input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.success-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.success-popup-content {
+  background-color: white;
+  padding: 30px;
+  border-radius: 8px;
+  text-align: center;
+  max-width: 400px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.success-popup-content h3 {
+  color: #4079ec;
+  margin-top: 0;
+}
+
+.success-popup-content p {
+  color: #333;
+  margin-bottom: 0;
+}
+
+.error-message {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 10px 15px;
+  border-radius: 4px;
+  margin: 0 20px 20px;
+  text-align: center;
+}
+
+.qr-code {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.repo-link {
+  text-align: center;
+  margin: 20px 0;
+  padding: 10px;
+  color: #1f385b;
+}
+
+.repo-link a {
+  color: #4079ec;
+  text-decoration: none;
+}
+
+.repo-link a:hover {
+  text-decoration: underline;
+}

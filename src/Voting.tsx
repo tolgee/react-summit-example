@@ -1,5 +1,6 @@
 import { FormEvent, useState, useEffect } from 'react';
 import { T, useTranslate } from '@tolgee/react';
+import { QRCodeSVG } from 'qrcode.react';
 
 import { Navbar } from './components/Navbar';
 
@@ -14,21 +15,39 @@ export const Voting = () => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [hasVoted, setHasVoted] = useState(false);
+  const [userVote, setUserVote] = useState<string | null>(null);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [totalVotes, setTotalVotes] = useState(0);
 
-  // API URL from environment variables
+  const hasVoted = userVote !== null;
+
+  // Set document title with Tolgee prefix
+  useEffect(() => {
+    document.title = `Tolgee | ${t({
+      key: 'app-title',
+      defaultValue: 'Pick Your Stack – Win Some Swag'
+    })}`;
+  }, [t]);
+
+  // Check if user has already voted
+  useEffect(() => {
+    const savedVote = localStorage.getItem('userVote');
+    if (savedVote) {
+      setUserVote(savedVote);
+      setSelectedOption(savedVote);
+    }
+  }, []);
+
   const apiUrl = import.meta.env.VITE_APP_API_URL || 'http://localhost:3001';
 
-  // Connect to WebSocket for live updates with reconnection logic
+  // Connect to WebSocket for live updates
   useEffect(() => {
     let ws: WebSocket | null = null;
     let reconnectTimeout: number | null = null;
-    const reconnectDelay = 10000; // Fixed 10 second delay
+    const reconnectDelay = 10000;
 
     const connect = () => {
-      // Determine if we should use secure WebSocket (wss) based on the current protocol
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
       const wsUrl = `${protocol}//${apiUrl.replace(/^https?:\/\//, '')}`;
 
@@ -52,31 +71,22 @@ export const Voting = () => {
 
       ws.onerror = (error) => {
         console.error('WebSocket error:', error);
-        // Fallback to polling if WebSocket fails
         fetchOptions();
       };
 
-      ws.onclose = (event) => {
-        console.log(`WebSocket closed with code ${event.code}. Reason: ${event.reason}`);
-        console.log(`Attempting to reconnect in ${reconnectDelay/1000}s...`);
-
-        reconnectTimeout = window.setTimeout(() => {
-          connect();
-        }, reconnectDelay);
+      ws.onclose = () => {
+        reconnectTimeout = window.setTimeout(connect, reconnectDelay);
       };
     };
 
     connect();
 
-    // Cleanup function
     return () => {
       if (ws) {
-        // Prevent reconnection attempts when component unmounts
         ws.onclose = null;
         ws.close();
       }
 
-      // Clear any pending reconnect timeouts
       if (reconnectTimeout !== null) {
         clearTimeout(reconnectTimeout);
       }
@@ -120,9 +130,7 @@ export const Voting = () => {
     try {
       const response = await fetch(`${apiUrl}/api/vote`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           option: selectedOption,
           email: email || undefined,
@@ -133,8 +141,12 @@ export const Voting = () => {
         throw new Error(`Failed to submit vote: ${response.statusText}`);
       }
 
-      setHasVoted(true);
+      localStorage.setItem('userVote', selectedOption);
+      setUserVote(selectedOption);
       setIsSubmitting(false);
+      setShowSuccessPopup(true);
+
+      setTimeout(() => setShowSuccessPopup(false), 3000);
     } catch (error) {
       console.error('Error submitting vote:', error);
       setError(t({
@@ -162,7 +174,7 @@ export const Voting = () => {
         });
       } else {
         // Fallback for browsers that don't support the Web Share API
-        navigator.clipboard.writeText('https://vote.tolgee.io');
+        await navigator.clipboard.writeText('https://vote.tolgee.io');
         alert(t({
           key: 'share-copied',
           defaultValue: 'Link copied to clipboard!'
@@ -180,36 +192,86 @@ export const Voting = () => {
         <header>
           <img src="/img/appLogo.svg" alt="App Logo" />
           <h1 className="header__title">
-            <T keyName="app-title" />
+            <T keyName="app-title">Pick Your Stack – Win Some Swag</T>
           </h1>
+          <div className="qr-code">
+            <QRCodeSVG value={window.location.href} size={120} />
+          </div>
         </header>
         <section className="items">
           <h2 className="question">
             <T keyName="vote-question">
-              What is your favorite frontend framework?
+              Global state: What's your coping mechanism?
             </T>
           </h2>
 
           {error && <div className="error-message">{error}</div>}
 
-          {!hasVoted ? (
-            <form className="voting-form" onSubmit={onVote}>
-              <div className="options-list">
-                {options.map((option) => (
-                  <div key={option.text} className="option">
-                    <input
-                      type="radio"
-                      id={`option-${option.text}`}
-                      name="option"
-                      value={option.text}
-                      checked={selectedOption === option.text}
-                      onChange={() => setSelectedOption(option.text)}
-                    />
-                    <label htmlFor={`option-${option.text}`}>{option.text}</label>
-                  </div>
-                ))}
+          {/* Success Popup */}
+          {showSuccessPopup && (
+            <div className="success-popup">
+              <div className="success-popup-content">
+                <h3>
+                  <T keyName="vote-success">Vote submitted successfully!</T>
+                </h3>
+                <p>
+                  <T keyName="vote-success-message">
+                    Thank you for your vote. You can see the results below.
+                  </T>
+                </p>
               </div>
+            </div>
+          )}
 
+          <div className="options-list">
+            {options.map((option) => (
+              <div
+                key={option.text}
+                className={`option-item ${selectedOption === option.text ? 'selected' : ''} ${userVote === option.text ? 'user-vote' : ''}`}
+              >
+                <div className="option-row">
+                  <div className="option-info">
+                    {!hasVoted && (
+                      <input
+                        type="radio"
+                        id={`option-${option.text}`}
+                        name="option"
+                        value={option.text}
+                        checked={selectedOption === option.text}
+                        onChange={() => setSelectedOption(option.text)}
+                      />
+                    )}
+                    <label htmlFor={`option-${option.text}`}>
+                      <T keyName={option.text}>
+                        {option.text.replace('option-', '').split('-').map(word => 
+                          word.charAt(0).toUpperCase() + word.slice(1)
+                        ).join(' ')}
+                      </T>
+                    </label>
+                  </div>
+                  <div className="option-votes">
+                    {option.votes} {option.votes === 1 ?
+                      t({ key: 'vote-singular', defaultValue: 'vote' }) : 
+                      t({ key: 'vote-plural', defaultValue: 'votes' })
+                    }
+                  </div>
+                </div>
+                <div className="option-row">
+                  <div className="result-bar-container">
+                    <div
+                      className="result-bar"
+                      style={{
+                        width: `${totalVotes > 0 ? (option.votes / totalVotes) * 100 : 0}%`,
+                      }}
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {!hasVoted && (
+            <form className="voting-form" onSubmit={onVote}>
               <div className="email-input">
                 <label htmlFor="email">
                   <T keyName="email-label">
@@ -240,35 +302,6 @@ export const Voting = () => {
                 )}
               </button>
             </form>
-          ) : (
-            <div className="thank-you">
-              <h3>
-                <T keyName="thank-you">Thank you for your vote!</T>
-              </h3>
-              <div className="results">
-                <h4>
-                  <T keyName="current-results">Current Results:</T>
-                </h4>
-                {options.map((option) => (
-                  <div key={option.text} className="result-item">
-                    <div className="result-label">
-                      {option.text} ({option.votes} {option.votes === 1 ?
-                        t({ key: 'vote-singular', defaultValue: 'vote' }) : 
-                        t({ key: 'vote-plural', defaultValue: 'votes' })
-                      })
-                    </div>
-                    <div className="result-bar-container">
-                      <div
-                        className="result-bar"
-                        style={{
-                          width: `${totalVotes > 0 ? (option.votes / totalVotes) * 100 : 0}%`,
-                        }}
-                      ></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
           )}
 
           <div className="items__buttons">
@@ -276,6 +309,14 @@ export const Voting = () => {
               <img src="/img/iconShare.svg" alt="Share" />
               <T keyName="share-button">Share</T>
             </button>
+          </div>
+
+          <div className="repo-link">
+            <a href="https://github.com/tolgee/react-summit-example" target="_blank" rel="noopener noreferrer">
+              <T keyName="repo-link">
+                  View on GitHub
+              </T>
+            </a>
           </div>
         </section>
       </div>
