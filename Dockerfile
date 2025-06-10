@@ -6,6 +6,9 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
+# Set default environment variable for the build
+ARG VITE_APP_URL=https://vote.tolgee.io
+ENV VITE_APP_URL=${VITE_APP_URL}
 RUN npm run build
 
 # Stage 2: Build the Node.js server

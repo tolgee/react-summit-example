@@ -2,6 +2,7 @@ import { T, useTranslate } from '@tolgee/react';
 
 export const ShareButton = () => {
   const { t } = useTranslate();
+  const appUrl = import.meta.env.VITE_APP_URL || 'https://vote.tolgee.io';
 
   const onShare = async () => {
     try {
@@ -17,11 +18,11 @@ export const ShareButton = () => {
               'Join the voting for the best state management library for React. Pick your favorite and win some swag!'
             ),
           }),
-          url: 'https://vote.tolgee.io',
+          url: appUrl,
         });
       } else {
         // Fallback for browsers that don't support the Web Share API
-        await navigator.clipboard.writeText('https://vote.tolgee.io');
+        await navigator.clipboard.writeText(appUrl);
         alert(t({
           key: 'share-copied',
           defaultValue: 'Link copied to clipboard!'

@@ -45,8 +45,16 @@ spec:
             secretKeyRef:
               name: vote-app-secrets
               key: TOLGEE_CDN_URL
+        - name: VITE_APP_URL
+          valueFrom:
+            configMapKeyRef:
+              name: vote-app-config
+              key: APP_URL
         - name: VITE_APP_API_URL
-          value: "https://vote.tolgee.io/api"
+          valueFrom:
+            configMapKeyRef:
+              name: vote-app-config
+              key: API_URL
         - name: DATA_DIR
           valueFrom:
             configMapKeyRef:

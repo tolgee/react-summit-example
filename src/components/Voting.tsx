@@ -96,9 +96,11 @@ export const Voting = () => {
             )}
           </button>
 
-          <ShareButton />
         </form>
       )}
+      <div className="share-button-container">
+        <ShareButton />
+      </div>
       <RepoLink />
     </section>
   );
