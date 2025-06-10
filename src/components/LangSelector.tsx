@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useTolgee } from '@tolgee/react';
+import { useTolgee, useTranslate } from '@tolgee/react';
 
 interface Language {
   id: number;
@@ -22,6 +22,7 @@ interface LanguagesResponse {
 }
 
 export const LangSelector: React.FC = () => {
+  const { t } = useTranslate();
   const tolgee = useTolgee(['pendingLanguage']);
   const [languages, setLanguages] = useState<Language[]>([]);
   const [loading, setLoading] = useState(false);
@@ -35,7 +36,7 @@ export const LangSelector: React.FC = () => {
         const projectId = import.meta.env.VITE_APP_TOLGEE_PROJECT_ID;
 
         const response = await fetch(
-          `${apiUrl}/v2/projects/${projectId}/languages?size=100`,
+          `${apiUrl}/v2/projects/${projectId}/languages?size=100&sort=name,asc`,
           {
             headers: {
               'X-API-Key': apiKey,
@@ -45,43 +46,21 @@ export const LangSelector: React.FC = () => {
         );
 
         if (!response.ok) {
-          throw new Error(`Failed to fetch languages: ${response.statusText}`);
+          console.error(`Failed to fetch languages: ${response.statusText}`);
+          return;
         }
 
         const data: LanguagesResponse = await response.json();
         setLanguages(data._embedded.languages);
       } catch (error) {
         console.error('Error fetching languages:', error);
-        // Fallback to default languages if API call fails
-        setLanguages([
-          { id: 1, name: 'English', tag: 'en', originalName: 'English', flagEmoji: '🇬🇧' },
-          { id: 2, name: 'Česky', tag: 'cs', originalName: 'Česky', flagEmoji: '🇨🇿' },
-          { id: 3, name: 'Français', tag: 'fr', originalName: 'Français', flagEmoji: '🇫🇷' },
-          { id: 4, name: 'Deutsch', tag: 'de', originalName: 'Deutsch', flagEmoji: '🇩🇪' },
-        ]);
       } finally {
         setLoading(false);
       }
     };
 
-    // Only fetch languages when the selector is clicked
-    const handleClick = () => {
-      if (languages.length === 0 && !loading) {
-        fetchLanguages();
-      }
-    };
-
-    const selectElement = document.querySelector('.lang-selector');
-    if (selectElement) {
-      selectElement.addEventListener('click', handleClick);
-    }
-
-    return () => {
-      if (selectElement) {
-        selectElement.removeEventListener('click', handleClick);
-      }
-    };
-  }, [languages.length, loading]);
+    fetchLanguages();
+  }, []);
 
   return (
     <select
@@ -96,12 +75,11 @@ export const LangSelector: React.FC = () => {
           </option>
         ))
       ) : (
-        <>
-          <option value="en">🇬🇧 English</option>
-          <option value="cs">🇨🇿 Česky</option>
-          <option value="fr">🇫🇷 Français</option>
-          <option value="de">🇩🇪 Deutsch</option>
-        </>
+        <option value={tolgee.getPendingLanguage()}>
+          {loading ?
+            t("lang-selector-loading", "Loading languages...") :
+            t("lang-selector-failed", "Whoops! Y’all hammered our servers harder than a Texas BBQ — no languages for now!")}
+        </option>
       )}
     </select>
   );

@@ -11,26 +11,19 @@ interface Option {
 
 export const Voting = () => {
   const { t } = useTranslate();
+  const [totalVotes, setTotalVotes] = useState(0);
   const [options, setOptions] = useState<Option[]>([]);
+
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [email, setEmail] = useState('');
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userVote, setUserVote] = useState<string | null>(null);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [totalVotes, setTotalVotes] = useState(0);
-
+  const [errorFetch, setErrorFetch] = useState<string | null>(null);
+  const [errorSubmit, setErrorSubmit] = useState<string | null>(null);
   const hasVoted = userVote !== null;
 
-  // Set document title with Tolgee prefix
-  useEffect(() => {
-    document.title = `Tolgee | ${t({
-      key: 'app-title',
-      defaultValue: 'Pick Your Stack – Win Some Swag'
-    })}`;
-  }, [t]);
-
-  // Check if user has already voted
   useEffect(() => {
     const savedVote = localStorage.getItem('userVote');
     if (savedVote) {
@@ -41,7 +34,6 @@ export const Voting = () => {
 
   const apiUrl = import.meta.env.VITE_APP_API_URL || 'http://localhost:3001';
 
-  // Connect to WebSocket for live updates
   useEffect(() => {
     let ws: WebSocket | null = null;
     let reconnectTimeout: number | null = null;
@@ -54,7 +46,7 @@ export const Voting = () => {
       ws = new WebSocket(wsUrl);
 
       ws.onopen = () => {
-        console.log('Connected to WebSocket server');
+        console.log('WebSocket connected');
       };
 
       ws.onmessage = (event) => {
@@ -63,6 +55,7 @@ export const Voting = () => {
           if (data.type === 'options') {
             setOptions(data.data);
             setTotalVotes(data.data.reduce((sum: number, option: Option) => sum + option.votes, 0));
+            setErrorFetch(null);
           }
         } catch (error) {
           console.error('Error parsing WebSocket message:', error);
@@ -75,6 +68,7 @@ export const Voting = () => {
       };
 
       ws.onclose = () => {
+        console.log('WebSocket disconnected');
         reconnectTimeout = window.setTimeout(connect, reconnectDelay);
       };
     };
@@ -93,31 +87,44 @@ export const Voting = () => {
     };
   }, [apiUrl]);
 
-  // Fetch options as fallback
+  const handleFetchError = (error: any) => {
+    console.error('Error fetching options:', error);
+    setErrorFetch(t({
+      key: 'error-fetching-options',
+      defaultValue: 'Failed to load voting options. Please try again later.'
+    }));
+  }
+
   const fetchOptions = async () => {
     try {
       const response = await fetch(`${apiUrl}/api/options`);
       if (!response.ok) {
-        throw new Error(`Failed to fetch options: ${response.statusText}`);
+        handleFetchError(response);
+        return;
       }
       const data = await response.json();
       setOptions(data);
       setTotalVotes(data.reduce((sum: number, option: Option) => sum + option.votes, 0));
+      setErrorFetch(null);
     } catch (error) {
-      console.error('Error fetching options:', error);
-      setError(t({
-        key: 'error-fetching-options',
-        defaultValue: 'Failed to load voting options. Please try again later.'
-      }));
+      handleFetchError(error);
     }
   };
 
-  // Submit vote
+  const handleVoteError = (error: any) => {
+    console.error('Error submitting vote:', error);
+    setErrorSubmit(t({
+      key: 'error-submitting-vote',
+      defaultValue: 'Failed to submit your vote. Please try again.'
+    }));
+    setIsSubmitting(false);
+  }
+
   const onVote = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!selectedOption) {
-      setError(t({
+      setErrorSubmit(t({
         key: 'error-no-option-selected',
         defaultValue: 'Please select an option to vote.'
       }));
@@ -125,7 +132,7 @@ export const Voting = () => {
     }
 
     setIsSubmitting(true);
-    setError(null);
+    setErrorSubmit(null);
 
     try {
       const response = await fetch(`${apiUrl}/api/vote`, {
@@ -138,7 +145,8 @@ export const Voting = () => {
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to submit vote: ${response.statusText}`);
+        handleVoteError(response);
+        return;
       }
 
       localStorage.setItem('userVote', selectedOption);
@@ -148,27 +156,23 @@ export const Voting = () => {
 
       setTimeout(() => setShowSuccessPopup(false), 3000);
     } catch (error) {
-      console.error('Error submitting vote:', error);
-      setError(t({
-        key: 'error-submitting-vote',
-        defaultValue: 'Failed to submit your vote. Please try again.'
-      }));
-      setIsSubmitting(false);
+      handleVoteError(error);
     }
   };
 
-  // Share the app
   const onShare = async () => {
     try {
       if (navigator.share) {
         await navigator.share({
           title: t({
             key: 'share-title',
-            defaultValue: 'Vote for your favorite framework!'
+            defaultValue: 'Vote for your favorite state management library!',
           }),
           text: t({
             key: 'share-text',
-            defaultValue: 'Join the voting for the best frontend framework!'
+            defaultValue: (
+              'Join the voting for the best state management library for React. Pick your favorite and win some swag!'
+            ),
           }),
           url: 'https://vote.tolgee.io',
         });
@@ -205,7 +209,8 @@ export const Voting = () => {
             </T>
           </h2>
 
-          {error && <div className="error-message">{error}</div>}
+          {errorFetch && <div className="error-message">{errorFetch}</div>}
+          {errorSubmit && <div className="error-message">{errorSubmit}</div>}
 
           {/* Success Popup */}
           {showSuccessPopup && (
@@ -216,7 +221,7 @@ export const Voting = () => {
                 </h3>
                 <p>
                   <T keyName="vote-success-message">
-                    Thank you for your vote. You can see the results below.
+                    Thank you for your vote. You can watch the results grow.
                   </T>
                 </p>
               </div>
@@ -250,10 +255,7 @@ export const Voting = () => {
                     </label>
                   </div>
                   <div className="option-votes">
-                    {option.votes} {option.votes === 1 ?
-                      t({ key: 'vote-singular', defaultValue: 'vote' }) : 
-                      t({ key: 'vote-plural', defaultValue: 'votes' })
-                    }
+                    {option.votes}
                   </div>
                 </div>
                 <div className="option-row">
@@ -275,7 +277,7 @@ export const Voting = () => {
               <div className="email-input">
                 <label htmlFor="email">
                   <T keyName="email-label">
-                    Email (optional - for discount code):
+                    Email (optional - to participate in the raffle):
                   </T>
                 </label>
                 <input
@@ -301,15 +303,14 @@ export const Voting = () => {
                   <T keyName="submit-vote">Vote</T>
                 )}
               </button>
+
+              <button className="button" onClick={onShare} type="button">
+                <img src="/img/iconShare.svg" alt="Share" />
+                <T keyName="share-button">Share</T>
+              </button>
             </form>
           )}
 
-          <div className="items__buttons">
-            <button className="button" onClick={onShare}>
-              <img src="/img/iconShare.svg" alt="Share" />
-              <T keyName="share-button">Share</T>
-            </button>
-          </div>
 
           <div className="repo-link">
             <a href="https://github.com/tolgee/react-summit-example" target="_blank" rel="noopener noreferrer">
