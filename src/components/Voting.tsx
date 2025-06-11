@@ -38,9 +38,10 @@ export const Voting = () => {
 
     if (!selectedOption) return;
 
-    await submitVote(selectedOption, email);
-    setShowSuccessPopup(true);
-    setTimeout(() => setShowSuccessPopup(false), 3000);
+    if (await submitVote(selectedOption, email)) {
+      setShowSuccessPopup(true);
+      setTimeout(() => setShowSuccessPopup(false), 3000);
+    }
   };
 
   return (

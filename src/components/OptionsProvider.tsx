@@ -12,7 +12,7 @@ interface OptionsContextType {
   errorFetch: string | null;
   userVote: string | null;
   setUserVote: (vote: string | null) => void;
-  submitVote: (option: string, email?: string) => Promise<void>;
+  submitVote: (option: string, email?: string) => Promise<boolean>;
   isSubmitting: boolean;
   errorSubmit: string | null;
   setErrorSubmit: (error: string | null) => void;
@@ -158,7 +158,7 @@ export const OptionsProvider = ({ children }: OptionsProviderProps) => {
         key: 'error-no-option-selected',
         defaultValue: 'Please select an option to vote.'
       }));
-      return;
+      return false;
     }
 
     setIsSubmitting(true);
@@ -176,14 +176,16 @@ export const OptionsProvider = ({ children }: OptionsProviderProps) => {
 
       if (!response.ok) {
         handleVoteError(response);
-        return;
+        return false;
       }
 
       localStorage.setItem('userVote', option);
       setUserVote(option);
       setIsSubmitting(false);
+      return true;
     } catch (error) {
       handleVoteError(error);
+      return false;
     }
   };
 
@@ -199,6 +201,38 @@ export const OptionsProvider = ({ children }: OptionsProviderProps) => {
     setErrorSubmit,
     leaderboard,
     isLive,
+  };
+
+  return (
+    <OptionsContext.Provider value={value}>
+      {children}
+    </OptionsContext.Provider>
+  );
+};
+
+export const DummyOptionsProvider = ({ children }: OptionsProviderProps) => {
+  const mockOptions: Option[] = [
+    {text: 'option-1', votes: 10},
+    {text: 'option-2', votes: 20},
+    {text: 'option-3', votes: 15},
+  ];
+
+  const value: OptionsContextType = {
+    options: mockOptions,
+    totalVotes: 45,
+    errorFetch: null,
+    userVote: null,
+    setUserVote: () => {
+    },
+    submitVote: async () => {
+      return true;
+    },
+    isSubmitting: false,
+    errorSubmit: null,
+    setErrorSubmit: () => {
+    },
+    leaderboard: false,
+    isLive: true,
   };
 
   return (
