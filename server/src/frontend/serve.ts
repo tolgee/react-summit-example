@@ -10,10 +10,10 @@ export function serveFrontend(app: express.Application): void {
     logger.warn(`Frontend build directory not found at: ${frontendBuildPath}`);
     return;
   }
-  
+
   logger.info(`Serving frontend static files from: ${frontendBuildPath}`);
   app.use(express.static(frontendBuildPath));
-  
+
   app.get('{/*path}', (req, res) => {
     if (req.path.startsWith('/api/')) {
       res.status(404).json({ error: 'API endpoint not found' });

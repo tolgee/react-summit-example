@@ -5,7 +5,7 @@ import { logger } from '../logger';
 export function forwardFrontend(app: express.Application): void {
   const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
   logger.info(`Forwarding frontend requests to: ${frontendUrl}`);
-  
+
   app.all('{/*path}', (req, res) => {
     if (req.path.startsWith('/api/')) {
       res.status(404).json({ error: 'API endpoint not found' });

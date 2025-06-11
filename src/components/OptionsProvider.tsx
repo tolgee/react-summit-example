@@ -17,6 +17,7 @@ interface OptionsContextType {
   errorSubmit: string | null;
   setErrorSubmit: (error: string | null) => void;
   leaderboard: boolean;
+  isLive: boolean;
 }
 
 const OptionsContext = createContext<OptionsContextType | undefined>(undefined);
@@ -42,6 +43,7 @@ export const OptionsProvider = ({ children }: OptionsProviderProps) => {
   const [errorFetch, setErrorFetch] = useState<string | null>(null);
   const [errorSubmit, setErrorSubmit] = useState<string | null>(null);
   const [leaderboard, setLeaderboard] = useState(false);
+  const [isLive, setIsLive] = useState(false);
 
   useEffect(() => {
     const savedVote = localStorage.getItem('userVote');
@@ -72,6 +74,7 @@ export const OptionsProvider = ({ children }: OptionsProviderProps) => {
 
       ws.onopen = () => {
         console.log('WebSocket connected');
+        setIsLive(true);
       };
 
       ws.onmessage = (event) => {
@@ -81,19 +84,23 @@ export const OptionsProvider = ({ children }: OptionsProviderProps) => {
             setOptions(data.data);
             setTotalVotes(data.data.reduce((sum: number, option: Option) => sum + option.votes, 0));
             setErrorFetch(null);
+            setIsLive(true);
           }
         } catch (error) {
           console.error('Error parsing WebSocket message:', error);
+          setIsLive(false);
         }
       };
 
       ws.onerror = (error) => {
         console.error('WebSocket error:', error);
+        setIsLive(false);
         fetchOptions();
       };
 
       ws.onclose = () => {
         console.log('WebSocket disconnected');
+        setIsLive(false);
         reconnectTimeout = window.setTimeout(connect, reconnectDelay);
       };
     };
@@ -191,6 +198,7 @@ export const OptionsProvider = ({ children }: OptionsProviderProps) => {
     errorSubmit,
     setErrorSubmit,
     leaderboard,
+    isLive,
   };
 
   return (

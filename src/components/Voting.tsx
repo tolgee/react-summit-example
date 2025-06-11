@@ -16,7 +16,8 @@ export const Voting = () => {
     userVote, 
     submitVote, 
     isSubmitting,
-    leaderboard
+    leaderboard,
+    isLive
   } = useOptions();
 
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
@@ -44,6 +45,8 @@ export const Voting = () => {
 
   return (
     <section className="items">
+      {!isLive && <div className="connection-status" />}
+      {isLive && <div className="connection-status connection-status--reconnected" />}
       <h2 className="question">
         <T keyName="vote-question">
           Global state: What's your coping mechanism?
