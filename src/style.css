@@ -181,6 +181,7 @@ header {
   display: grid;
   margin-bottom: 20px;
   margin-top: 8px;
+  gap: 16px;
   color: white;
   justify-items: center;
 }
@@ -188,8 +189,8 @@ header {
 header h1 {
   padding: 0;
   margin: 0;
-  font-size: 48px;
-  font-weight: 300;
+  font-size: 40px;
+  font-weight: 500;
   font-style: normal;
   text-align: center;
 }
@@ -206,16 +207,15 @@ header h1 {
 
 .question {
   color: var(--color-secondary-dark);
-  text-align: center;
-  margin: 20px 0;
+  margin: 32px 24px 0 24px;
   font-size: 24px;
 }
 
 .options-list {
-  padding: 20px;
+  padding: 20px 24px;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 12px;
 }
 
 .option-item {
@@ -317,7 +317,7 @@ header h1 {
 }
 
 .voting-form, .share-button-container {
-  padding: 0 20px 20px;
+  padding: 12px 24px 20px 24px;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -327,6 +327,10 @@ header h1 {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
+}
+
+.buttons-container {
+  margin-top: 12px;
 }
 
 .input-field, .button-wrapper {
@@ -351,7 +355,6 @@ header h1 {
 .input-hints {
   display: flex;
   flex-direction: column;
-  gap: 8px;
 }
 
 .input-hints span {
@@ -418,7 +421,7 @@ header h1 {
 
 .repo-link {
   text-align: center;
-  margin: 20px 0;
+  margin: 0 0 20px 0;
   padding: 10px;
   color: var(--color-secondary-dark);
 }
