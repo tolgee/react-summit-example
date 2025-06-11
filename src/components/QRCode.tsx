@@ -10,9 +10,9 @@ export const QRCode = () => {
     const updateSize = () => {
       if (containerRef.current) {
         const containerWidth = containerRef.current.clientWidth;
-        // 30px for padding (15px on each side), max 215px for QR (245px - 30px padding)
-        const newSize = Math.min(containerWidth - 30, 215);
-        setQrSize(newSize > 0 ? newSize : 120);
+        // 40px for padding (20px on each side), max 205px for QR (245px - 40px padding)
+        const newSize = Math.min(containerWidth - 40, 205);
+        setQrSize(newSize > 0 ? newSize : 0);
       }
     };
 
