@@ -27,6 +27,7 @@ export const VotingItem = ({ option, selected, onSelect }: VotingItemProps) => {
   return (
     <div
       className={`option-item ${selected ? 'selected' : ''} ${isUserVote ? 'user-vote' : ''}`}
+      onClick={() => onSelect(option.text)}
     >
       <div className="option-row">
         <div className="option-info">
@@ -34,6 +35,7 @@ export const VotingItem = ({ option, selected, onSelect }: VotingItemProps) => {
             <input
               type="radio"
               id={`option-${option.text}`}
+              className="option-radio"
               name="option"
               value={option.text}
               checked={selected}

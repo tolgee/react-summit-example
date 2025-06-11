@@ -75,7 +75,7 @@ export const Voting = () => {
         </div>
       )}
 
-      {!hasVoted && (
+      {!hasVoted ? (
         <form className="voting-form" onSubmit={onVote}>
           <div className="inputs-container">
             <div className="input-field">
@@ -126,23 +126,31 @@ export const Voting = () => {
             </span>
           </div>
 
-          <button
-            type="submit"
-            disabled={isSubmitting || !selectedOption}
-            className="button"
-          >
-            {isSubmitting ? (
-              <T keyName="submitting-vote">Submitting...</T>
-            ) : (
-              <T keyName="submit-vote">Vote</T>
-            )}
-          </button>
+          <div className="buttons-container">
+            <div className="button-wrapper">
+              <button
+                type="submit"
+                disabled={isSubmitting || !selectedOption}
+                className="button submit-vote-button"
+              >
+                {isSubmitting ? (
+                  <T keyName="submitting-vote">Submitting...</T>
+                ) : (
+                  <T keyName="submit-vote">Vote</T>
+                )}
+              </button>
+            </div>
+            <div className="button-wrapper">
+              <ShareButton />
+            </div>
+          </div>
 
         </form>
+      ) : (
+        <div className="share-button-container">
+          <ShareButton />
+        </div>
       )}
-      <div className="share-button-container">
-        <ShareButton />
-      </div>
       <RepoLink />
     </section>
   );
