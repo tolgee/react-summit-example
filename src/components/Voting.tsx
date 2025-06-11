@@ -22,6 +22,7 @@ export const Voting = () => {
 
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
   const hasVoted = userVote !== null || leaderboard;
@@ -38,7 +39,7 @@ export const Voting = () => {
 
     if (!selectedOption) return;
 
-    if (await submitVote(selectedOption, email)) {
+    if (await submitVote(selectedOption, email, name)) {
       setShowSuccessPopup(true);
       setTimeout(() => setShowSuccessPopup(false), 3000);
     }
@@ -76,22 +77,43 @@ export const Voting = () => {
 
       {!hasVoted && (
         <form className="voting-form" onSubmit={onVote}>
-          <div className="email-input">
-            <label htmlFor="email">
-              <T keyName="email-label">
-                Email:
-              </T>
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder={t({
-                key: 'email-placeholder',
-                defaultValue: 'your@email.com (optional)',
-              })}
-            />
+          <div className="inputs-container">
+            <div className="input-field">
+              <label htmlFor="email">
+                <T keyName="email-label">
+                  Email
+                </T>
+              </label>
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder={t({
+                  key: 'email-placeholder',
+                  defaultValue: 'your@email.com (optional)',
+                })}
+              />
+            </div>
+            <div className="input-field">
+              <label htmlFor="name">
+                <T keyName="name-label">
+                  Name
+                </T>
+              </label>
+              <input
+                type="text"
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder={t({
+                  key: 'name-placeholder',
+                  defaultValue: 'Your name (optional)',
+                })}
+              />
+            </div>
+          </div>
+          <div className="input-hints">
             <span>
               <T keyName="email-hint-1">
                 We’ll use your email to let you know if you win the raffle! Plus, everyone who enters will get a discount code for the Tolgee Cloud plan.

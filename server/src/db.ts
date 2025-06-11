@@ -68,6 +68,7 @@ export const initDb = async () => {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         option_id INTEGER NOT NULL,
         email TEXT,
+        name TEXT,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (option_id) REFERENCES options (id) ON DELETE RESTRICT
       ) STRICT
@@ -95,7 +96,7 @@ export const getOptionsWithVotes = async () => {
       FROM options o
       LEFT JOIN votes v ON o.id = v.option_id
       GROUP BY o.id
-      ORDER BY votes DESC
+      ORDER BY votes DESC, o.id
     `);
   } catch (error) {
     logger.error('Error getting options with votes:', error);
@@ -103,7 +104,7 @@ export const getOptionsWithVotes = async () => {
   }
 };
 
-export const addVote = async (optionName: string, email?: string) => {
+export const addVote = async (optionName: string, email?: string, name?: string) => {
   try {
     const option = await getAsync('SELECT id FROM options WHERE text = ?', [optionName]);
     if (!option) {
@@ -111,8 +112,8 @@ export const addVote = async (optionName: string, email?: string) => {
     }
 
     const result = await runAsync(
-      'INSERT INTO votes (option_id, email) VALUES (?, ?)',
-      [option.id, email || null]
+      'INSERT INTO votes (option_id, email, name) VALUES (?, ?, ?)',
+      [option.id, email || null, name || null]
     );
 
     return { success: true, id: result.lastID, text: optionName };

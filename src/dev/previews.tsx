@@ -1,15 +1,15 @@
-import {ComponentPreview, Previews} from "@react-buddy/ide-toolbox";
-import {PaletteTree} from "./palette";
-import {Navbar} from "../components/Navbar.tsx";
-import {Voting} from "../components/Voting.tsx";
-import {LoadingScreen} from "../components/LoadingScreen.tsx";
-import {VotingItem} from "../components/VotingItem.tsx";
-import {SuccessPopup} from "../components/SuccessPopup.tsx";
-import {LangSelector} from "../components/LangSelector.tsx";
-import {Header} from "../components/Header.tsx";
-import {QRCode} from "../components/QRCode.tsx";
-import {ShareButton} from "../components/ShareButton.tsx";
-import {LocalLoadingComponent} from "../components/LocalLoadingComponent.tsx";
+import { ComponentPreview , Previews} from "@react-buddy/ide-toolbox";
+import { PaletteTree } from "./palette";
+import { Navbar } from "../components/Navbar.tsx";
+import { Voting } from "../components/Voting.tsx";
+import { LoadingScreen } from "../components/LoadingScreen.tsx";
+import { VotingItem } from "../components/VotingItem.tsx";
+import { SuccessPopup } from "../components/SuccessPopup.tsx";
+import { LangSelector } from "../components/LangSelector.tsx";
+import { Header } from "../components/Header.tsx";
+import { QRCode } from "../components/QRCode.tsx";
+import { ShareButton } from "../components/ShareButton.tsx";
+import { LocalLoadingComponent } from "../components/LocalLoadingComponent.tsx";
 
 const ComponentPreviews = () => {
   return (

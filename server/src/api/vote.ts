@@ -7,14 +7,14 @@ const router = express.Router();
 
 router.post('/vote', async (req, res) => {
   try {
-    const { option, email } = req.body;
+    const { option, email, name } = req.body;
 
     if (option === undefined || option === null) {
       res.status(400).json({ error: 'Option is required' });
       return;
     }
 
-    const result = await addVote(option, email);
+    const result = await addVote(option, email, name);
     await broadcastOptions();
     res.json(result);
   } catch (error) {

@@ -12,7 +12,7 @@ interface OptionsContextType {
   errorFetch: string | null;
   userVote: string | null;
   setUserVote: (vote: string | null) => void;
-  submitVote: (option: string, email?: string) => Promise<boolean>;
+  submitVote: (option: string, email?: string, name?: string) => Promise<boolean>;
   isSubmitting: boolean;
   errorSubmit: string | null;
   setErrorSubmit: (error: string | null) => void;
@@ -152,7 +152,7 @@ export const OptionsProvider = ({ children }: OptionsProviderProps) => {
     setIsSubmitting(false);
   }
 
-  const submitVote = async (option: string, email?: string) => {
+  const submitVote = async (option: string, email?: string, name?: string) => {
     if (!option) {
       setErrorSubmit(t({
         key: 'error-no-option-selected',
@@ -171,6 +171,7 @@ export const OptionsProvider = ({ children }: OptionsProviderProps) => {
         body: JSON.stringify({
           option,
           email: email || undefined,
+          name: name || undefined,
         }),
       });
 
