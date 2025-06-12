@@ -23,7 +23,7 @@ export const LangSelector: React.FC = () => {
         tolgee.changeLanguage(randomizedLangs[nextIndex].tag);
       };
       handler();
-      const timer = setInterval(handler, 5000);
+      const timer = setInterval(handler, rotate * 1000);
       return () => {
         clearInterval(timer);
         tolgee.changeLanguage(currentLanguage);
