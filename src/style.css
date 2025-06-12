@@ -177,6 +177,11 @@ button img {
   background-position-y: 9px;
 }
 
+
+.navbar .lang-selector.rotating {
+  background: transparent;
+}
+
 @media (min-width: 1200px) {
   .navbar .lang-selector {
     position: fixed;
