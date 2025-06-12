@@ -47,13 +47,14 @@ export const App = () => {
   });
 
   if (loading) {
-    <LoadingScreen />;
+    return <LoadingScreen />;
   }
 
   return (
     <>
       <TolgeeProvider
         tolgee={tolgee}
+        options={{ useSuspense: true }}
         fallback={<LoadingScreen />}
       >
         <DummyOptionsProvider languages={languages}>

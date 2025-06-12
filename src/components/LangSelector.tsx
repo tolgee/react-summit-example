@@ -12,6 +12,9 @@ export const LangSelector: React.FC = () => {
 
   const { languages: fetchedLanguages, fetchLanguages } = useLanguages({
     auto: false,
+    onLoad(languages) {
+      tolgee.updateOptions({ availableLanguages: languages.map((l) => l.tag) });
+    },
   });
 
   const languages = fetchedLanguages ?? globalLanguages;
