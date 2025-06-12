@@ -3,11 +3,18 @@ import ActivityDetector from "react-activity-detector";
 import { useTolgee } from "@tolgee/react";
 import { useOptions } from "./OptionsProvider";
 import { shuffleArray } from "./shuffleArray";
+import { useLanguages } from "./useLanguages";
 
 export const LangSelector: React.FC = () => {
-  const { languages, rotate } = useOptions();
+  const { languages: globalLanguages, rotate } = useOptions();
   const tolgee = useTolgee(["pendingLanguage"]);
   const [userIdle, setUserIdle] = useState(false);
+
+  const { languages: fetchedLanguages, fetchLanguages } = useLanguages({
+    auto: false,
+  });
+
+  const languages = fetchedLanguages ?? globalLanguages;
 
   useEffect(() => {
     const currentLanguage = tolgee.getLanguage();
@@ -47,6 +54,9 @@ export const LangSelector: React.FC = () => {
           const selectedLang = e.target.value;
           localStorage.setItem("userLocale", selectedLang);
           tolgee.changeLanguage(selectedLang);
+        }}
+        onClick={() => {
+          fetchLanguages();
         }}
         value={tolgee.getPendingLanguage()}
       >

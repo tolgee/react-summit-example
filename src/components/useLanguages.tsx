@@ -21,49 +21,50 @@ interface LanguagesResponse {
 }
 
 type Props = {
-  onLoad: (languages: Language[]) => void;
+  onLoad?: (languages: Language[]) => void;
+  auto?: boolean;
 };
 
-export const useLanguages = ({ onLoad }: Props) => {
+export const useLanguages = ({ onLoad, auto = true }: Props) => {
   const [languages, setLanguages] = useState<Language[] | undefined>(undefined);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchLanguages = async () => {
-      setLoading(true);
-      try {
-        const apiUrl = import.meta.env.VITE_APP_TOLGEE_API_URL;
-        const apiKey = import.meta.env.VITE_APP_TOLGEE_API_KEY;
-        const projectId = import.meta.env.VITE_APP_TOLGEE_PROJECT_ID;
+  const fetchLanguages = async () => {
+    setLoading(true);
+    try {
+      const apiUrl = import.meta.env.VITE_APP_TOLGEE_API_URL;
+      const apiKey = import.meta.env.VITE_APP_TOLGEE_API_KEY;
+      const projectId = import.meta.env.VITE_APP_TOLGEE_PROJECT_ID;
 
-        const url = projectId
-          ? `${apiUrl}/v2/projects/${projectId}/languages?size=100&sort=name,asc`
-          : `${apiUrl}/v2/projects/languages?size=100&sort=name,asc`;
+      const url = projectId
+        ? `${apiUrl}/v2/projects/${projectId}/languages?size=100&sort=name,asc`
+        : `${apiUrl}/v2/projects/languages?size=100&sort=name,asc`;
 
-        const response = await fetch(url, {
-          headers: {
-            "X-API-Key": apiKey,
-            "Content-Type": "application/json",
-          },
-        });
+      const response = await fetch(url, {
+        headers: {
+          "X-API-Key": apiKey,
+          "Content-Type": "application/json",
+        },
+      });
 
-        if (!response.ok) {
-          console.error(`Failed to fetch languages: ${response.statusText}`);
-          return;
-        }
-
-        const data: LanguagesResponse = await response.json();
-        setLanguages(data._embedded.languages);
-        onLoad(data._embedded.languages)
-      } catch (error) {
-        console.error("Error fetching languages:", error);
-      } finally {
-        setLoading(false);
+      if (!response.ok) {
+        console.error(`Failed to fetch languages: ${response.statusText}`);
+        return;
       }
-    };
 
-    fetchLanguages();
-  }, []);
+      const data: LanguagesResponse = await response.json();
+      setLanguages(data._embedded.languages);
+      onLoad?.(data._embedded.languages);
+    } catch (error) {
+      console.error("Error fetching languages:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  return { languages, loading };
+  useEffect(() => {
+    fetchLanguages()
+  }, [auto]);
+
+  return { languages, loading, fetchLanguages };
 };
