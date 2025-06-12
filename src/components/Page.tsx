@@ -1,11 +1,16 @@
-import { Navbar } from './Navbar';
-import { Header } from './Header';
-import { Voting } from './Voting';
-import { OptionsProvider } from './OptionsProvider';
+import { Navbar } from "./Navbar";
+import { Header } from "./Header";
+import { Voting } from "./Voting";
+import { OptionsProvider } from "./OptionsProvider";
+import { Language } from "./useLanguages";
 
-export const Page = () => {
+type Props = {
+  languages: Language[] | undefined;
+};
+
+export const Page = ({ languages }: Props) => {
   return (
-    <OptionsProvider>
+    <OptionsProvider languages={languages}>
       <div className="background-wrapper">
         <div className="example">
           <Navbar />

@@ -34,7 +34,7 @@ const ComponentPreviews = () => {
           <SuccessPopup show />
         </ComponentPreview>
         <ComponentPreview path="/LangSelector">
-          <LangSelector/>
+          <LangSelector />
         </ComponentPreview>
         <ComponentPreview path="/Header">
           <Header/>
