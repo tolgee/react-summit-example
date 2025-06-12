@@ -1,5 +1,6 @@
 import {T, useTranslate} from '@tolgee/react';
 import { useOptions, Option } from './OptionsProvider';
+import { useLeaderboardMode } from './useLeaderboardMode';
 
 interface VotingItemProps {
   option: Option;
@@ -13,7 +14,8 @@ const removeInvisibleCharacters = (str: string): string => {
 
 export const VotingItem = ({ option, selected, onSelect }: VotingItemProps) => {
   const { t } = useTranslate();
-  const { totalVotes, userVote, leaderboard } = useOptions();
+  const { totalVotes, userVote } = useOptions();
+  const leaderboard = useLeaderboardMode();
   const isUserVote = !leaderboard && userVote === option.text;
   const hasVoted = userVote !== null || leaderboard;
 

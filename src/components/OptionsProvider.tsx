@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode, useRef } from 'react';
 import { useTranslate } from '@tolgee/react';
+import { useLeaderboardMode } from './useLeaderboardMode';
 
 export interface Option {
   text: string;
@@ -16,7 +17,6 @@ interface OptionsContextType {
   isSubmitting: boolean;
   errorSubmit: string | null;
   setErrorSubmit: (error: string | null) => void;
-  leaderboard: boolean;
   isLive: boolean;
   explosions: number[];
   removeExplosion: (id: number) => void,
@@ -46,21 +46,16 @@ export const OptionsProvider = ({ children }: OptionsProviderProps) => {
   const [userVote, setUserVote] = useState<string | null>(null);
   const [errorFetch, setErrorFetch] = useState<string | null>(null);
   const [errorSubmit, setErrorSubmit] = useState<string | null>(null);
-  const [leaderboard, setLeaderboard] = useState(false);
   const [isLive, setIsLive] = useState(false);
   const [explosions, setExplosions] = useState<number[]>([]);
   const hasVoted = useRef(false)
+  const leaderboardMode = useLeaderboardMode();
 
   useEffect(() => {
     const savedVote = localStorage.getItem('userVote');
     if (savedVote) {
       setUserVote(savedVote);
     }
-  }, []);
-
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    setLeaderboard(Boolean(urlParams.get('leaderboard')));
   }, []);
 
   useEffect(() => {
@@ -217,7 +212,7 @@ export const OptionsProvider = ({ children }: OptionsProviderProps) => {
     }
   };
 
-  hasVoted.current = userVote !== null || leaderboard;
+  hasVoted.current = userVote !== null || leaderboardMode;
 
   const value = {
     options,
@@ -229,7 +224,6 @@ export const OptionsProvider = ({ children }: OptionsProviderProps) => {
     isSubmitting,
     errorSubmit,
     setErrorSubmit,
-    leaderboard,
     isLive,
     removeExplosion,
     explosions,
@@ -265,7 +259,6 @@ export const DummyOptionsProvider = ({ children }: OptionsProviderProps) => {
     errorSubmit: null,
     setErrorSubmit: () => {
     },
-    leaderboard: false,
     isLive: true,
     explosions: [],
     removeExplosion: () => {},

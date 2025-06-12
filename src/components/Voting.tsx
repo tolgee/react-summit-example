@@ -7,6 +7,7 @@ import { SuccessPopup } from "./SuccessPopup";
 import { RepoLink } from "./RepoLink.tsx";
 import { LocalLoadingComponent } from "./LocalLoadingComponent";
 import { VoteButton } from "./VoteButton.tsx";
+import { useLeaderboardMode } from "./useLeaderboardMode";
 
 export const Voting = () => {
   const { t } = useTranslate();
@@ -17,10 +18,10 @@ export const Voting = () => {
     userVote,
     submitVote,
     isSubmitting,
-    leaderboard,
     isLive,
     hasVoted,
   } = useOptions();
+  const leaderboard = useLeaderboardMode();
 
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [email, setEmail] = useState("");
