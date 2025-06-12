@@ -139,12 +139,12 @@ export const Voting = () => {
             </div>
           </div>
         </form>
-      ) : (
+      ) : !leaderboard && (
         <div className="share-button-container">
           <ShareButton />
         </div>
       )}
-      <RepoLink />
+      {!leaderboard && <RepoLink />}
     </section>
   );
 };
