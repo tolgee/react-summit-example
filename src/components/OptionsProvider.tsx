@@ -22,7 +22,6 @@ interface OptionsContextType {
   removeExplosion: (id: number) => void,
   addExplosions: (n: number) => void,
   hasVoted: boolean,
-  rotate: number | undefined,
 }
 
 const OptionsContext = createContext<OptionsContextType | undefined>(undefined);
@@ -48,7 +47,6 @@ export const OptionsProvider = ({ children }: OptionsProviderProps) => {
   const [errorFetch, setErrorFetch] = useState<string | null>(null);
   const [errorSubmit, setErrorSubmit] = useState<string | null>(null);
   const [leaderboard, setLeaderboard] = useState(false);
-  const [rotate, setRotate] = useState<string>();
   const [isLive, setIsLive] = useState(false);
   const [explosions, setExplosions] = useState<number[]>([]);
   const hasVoted = useRef(false)
@@ -63,7 +61,6 @@ export const OptionsProvider = ({ children }: OptionsProviderProps) => {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     setLeaderboard(Boolean(urlParams.get('leaderboard')));
-    setRotate(urlParams.get('rotate') ?? undefined);
   }, []);
 
   useEffect(() => {
@@ -238,7 +235,6 @@ export const OptionsProvider = ({ children }: OptionsProviderProps) => {
     explosions,
     addExplosions,
     hasVoted: hasVoted.current,
-    rotate: rotate ? Number(rotate) : undefined,
   };
 
   return (
@@ -275,7 +271,6 @@ export const DummyOptionsProvider = ({ children }: OptionsProviderProps) => {
     removeExplosion: () => {},
     addExplosions: () => {},
     hasVoted: false,
-    rotate: undefined,
   };
 
   return (

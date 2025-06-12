@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import ActivityDetector from "react-activity-detector";
 import { useTolgee } from "@tolgee/react";
-import { useOptions } from "./OptionsProvider";
 import { shuffleArray } from "./shuffleArray";
 import { useLanguages } from "./useLanguages";
 import { useGlobalLanguages } from "./GlobalLanguagesProvider";
+import { useRotate } from "./useRotate";
 
 export const LangSelector: React.FC = () => {
-  const { rotate } = useOptions();
+  const rotate = useRotate();
   const { languages: globalLanguages } = useGlobalLanguages();
   const tolgee = useTolgee(["pendingLanguage"]);
   const [userIdle, setUserIdle] = useState(false);
