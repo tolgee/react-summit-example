@@ -17,7 +17,8 @@ export const Voting = () => {
     submitVote, 
     isSubmitting,
     leaderboard,
-    isLive
+    isLive,
+    hasVoted,
   } = useOptions();
 
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
@@ -25,7 +26,6 @@ export const Voting = () => {
   const [name, setName] = useState('');
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
-  const hasVoted = userVote !== null || leaderboard;
 
   // Set initial selected option based on user's previous vote
   useEffect(() => {

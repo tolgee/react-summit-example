@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode, useRef } from 'react';
 import { useTranslate } from '@tolgee/react';
 
 export interface Option {
@@ -8,7 +8,7 @@ export interface Option {
 
 interface OptionsContextType {
   options: Option[];
-  totalVotes: number;
+  totalVotes: number | undefined;
   errorFetch: string | null;
   userVote: string | null;
   setUserVote: (vote: string | null) => void;
@@ -18,6 +18,10 @@ interface OptionsContextType {
   setErrorSubmit: (error: string | null) => void;
   leaderboard: boolean;
   isLive: boolean;
+  explosions: number[];
+  removeExplosion: (id: number) => void,
+  addExplosions: (n: number) => void,
+  hasVoted: boolean,
 }
 
 const OptionsContext = createContext<OptionsContextType | undefined>(undefined);
@@ -36,7 +40,7 @@ interface OptionsProviderProps {
 
 export const OptionsProvider = ({ children }: OptionsProviderProps) => {
   const { t } = useTranslate();
-  const [totalVotes, setTotalVotes] = useState(0);
+  const [totalVotes, _setTotalVotes] = useState<number | undefined>(undefined);
   const [options, setOptions] = useState<Option[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userVote, setUserVote] = useState<string | null>(null);
@@ -44,6 +48,8 @@ export const OptionsProvider = ({ children }: OptionsProviderProps) => {
   const [errorSubmit, setErrorSubmit] = useState<string | null>(null);
   const [leaderboard, setLeaderboard] = useState(false);
   const [isLive, setIsLive] = useState(false);
+  const [explosions, setExplosions] = useState<number[]>([]);
+  const hasVoted = useRef(false)
 
   useEffect(() => {
     const savedVote = localStorage.getItem('userVote');
@@ -153,6 +159,30 @@ export const OptionsProvider = ({ children }: OptionsProviderProps) => {
     setIsSubmitting(false);
   }
 
+  function removeExplosion (id: number) {
+    setExplosions(items => items.filter(i => i !== id))
+  }
+
+  function addExplosions(n: number) {
+    if (hasVoted.current) {
+      setExplosions((existing) => {
+        const newExplosions = [...Array(n).keys()].map(() => Math.random())
+        return [...existing, ...newExplosions]
+      })
+    }
+  }
+
+  function setTotalVotes(newVotes: number) {
+    _setTotalVotes(previous => {
+      if(previous !== undefined && previous < newVotes) {
+        addExplosions(newVotes - previous)
+      }
+      return newVotes
+    })
+  }
+
+
+
   const submitVote = async (option: string, email?: string, name?: string) => {
     if (!option) {
       setErrorSubmit(t({
@@ -191,6 +221,8 @@ export const OptionsProvider = ({ children }: OptionsProviderProps) => {
     }
   };
 
+  hasVoted.current = userVote !== null || leaderboard;
+
   const value = {
     options,
     totalVotes,
@@ -203,6 +235,10 @@ export const OptionsProvider = ({ children }: OptionsProviderProps) => {
     setErrorSubmit,
     leaderboard,
     isLive,
+    removeExplosion,
+    explosions,
+    addExplosions,
+    hasVoted: hasVoted.current,
   };
 
   return (
@@ -235,6 +271,10 @@ export const DummyOptionsProvider = ({ children }: OptionsProviderProps) => {
     },
     leaderboard: false,
     isLive: true,
+    explosions: [],
+    removeExplosion: () => {},
+    addExplosions: () => {},
+    hasVoted: false,
   };
 
   return (

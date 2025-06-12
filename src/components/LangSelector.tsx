@@ -33,10 +33,9 @@ export const LangSelector: React.FC = () => {
       try {
         const apiUrl = import.meta.env.VITE_APP_TOLGEE_API_URL;
         const apiKey = import.meta.env.VITE_APP_TOLGEE_API_KEY;
-        const projectId = import.meta.env.VITE_APP_TOLGEE_PROJECT_ID;
 
         const response = await fetch(
-          `${apiUrl}/v2/projects/${projectId}/languages?size=100&sort=name,asc`,
+          `${apiUrl}/v2/projects/languages?size=100&sort=name,asc`,
           {
             headers: {
               'X-API-Key': apiKey,

@@ -195,6 +195,12 @@ header h1 {
   text-align: center;
 }
 
+.header__logo {
+  display: grid;
+  align-items: center;
+  justify-items: center;
+}
+
 .items {
   min-height: 500px;
   background-color: #ffffffcc;
