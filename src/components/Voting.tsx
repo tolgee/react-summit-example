@@ -1,20 +1,21 @@
-import { FormEvent, useState, useEffect } from 'react';
-import { T, useTranslate } from '@tolgee/react';
-import { useOptions } from './OptionsProvider';
-import { VotingItem } from './VotingItem';
-import { ShareButton } from './ShareButton';
-import { SuccessPopup } from './SuccessPopup';
+import { FormEvent, useState, useEffect } from "react";
+import { T, useTranslate } from "@tolgee/react";
+import { useOptions } from "./OptionsProvider";
+import { VotingItem } from "./VotingItem";
+import { ShareButton } from "./ShareButton";
+import { SuccessPopup } from "./SuccessPopup";
 import { RepoLink } from "./RepoLink.tsx";
-import { LocalLoadingComponent } from './LocalLoadingComponent';
+import { LocalLoadingComponent } from "./LocalLoadingComponent";
+import { VoteButton } from "./VoteButton.tsx";
 
 export const Voting = () => {
   const { t } = useTranslate();
-  const { 
-    options, 
-    errorFetch, 
-    errorSubmit, 
-    userVote, 
-    submitVote, 
+  const {
+    options,
+    errorFetch,
+    errorSubmit,
+    userVote,
+    submitVote,
     isSubmitting,
     leaderboard,
     isLive,
@@ -22,10 +23,9 @@ export const Voting = () => {
   } = useOptions();
 
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [email, setEmail] = useState('');
-  const [name, setName] = useState('');
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
-
 
   // Set initial selected option based on user's previous vote
   useEffect(() => {
@@ -48,7 +48,9 @@ export const Voting = () => {
   return (
     <section className="items">
       {!isLive && <div className="connection-status" />}
-      {isLive && <div className="connection-status connection-status--reconnected" />}
+      {isLive && (
+        <div className="connection-status connection-status--reconnected" />
+      )}
       <h2 className="question">
         <T keyName="vote-question">
           Global state: What's your coping mechanism?
@@ -80,9 +82,7 @@ export const Voting = () => {
           <div className="inputs-container">
             <div className="input-field">
               <label htmlFor="email">
-                <T keyName="email-label">
-                  Email
-                </T>
+                <T keyName="email-label">Email</T>
               </label>
               <input
                 type="email"
@@ -90,16 +90,14 @@ export const Voting = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder={t({
-                  key: 'email-placeholder',
-                  defaultValue: 'your@email.com (optional)',
+                  key: "email-placeholder",
+                  defaultValue: "your@email.com (optional)",
                 })}
               />
             </div>
             <div className="input-field">
               <label htmlFor="name">
-                <T keyName="name-label">
-                  Name
-                </T>
+                <T keyName="name-label">Name</T>
               </label>
               <input
                 type="text"
@@ -107,8 +105,8 @@ export const Voting = () => {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder={t({
-                  key: 'name-placeholder',
-                  defaultValue: 'Your name (optional)',
+                  key: "name-placeholder",
+                  defaultValue: "Your name (optional)",
                 })}
               />
             </div>
@@ -116,35 +114,30 @@ export const Voting = () => {
           <div className="input-hints">
             <span>
               <T keyName="email-hint-1">
-                We’ll use your email to let you know if you win the raffle! Plus, everyone who enters will get a discount code for the Tolgee Cloud plan.
+                We’ll use your email to let you know if you win the raffle!
+                Plus, everyone who enters will get a discount code for the
+                Tolgee Cloud plan.
               </T>
             </span>
             <span>
               <T keyName="email-hint-2">
-                Not into sharing your email? No worries — you can still vote, but you won’t be entered into the raffle.
+                Not into sharing your email? No worries — you can still vote,
+                but you won’t be entered into the raffle.
               </T>
             </span>
           </div>
 
           <div className="buttons-container">
             <div className="button-wrapper">
-              <button
-                type="submit"
-                disabled={isSubmitting || !selectedOption}
-                className="button submit-vote-button"
-              >
-                {isSubmitting ? (
-                  <T keyName="submitting-vote">Submitting...</T>
-                ) : (
-                  <T keyName="submit-vote">Vote</T>
-                )}
-              </button>
+              <VoteButton
+                isSubmitting={isSubmitting}
+                disabled={!selectedOption}
+              />
             </div>
             <div className="button-wrapper">
               <ShareButton />
             </div>
           </div>
-
         </form>
       ) : (
         <div className="share-button-container">

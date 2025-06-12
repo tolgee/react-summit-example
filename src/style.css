@@ -110,6 +110,7 @@ body {
   text-align: center;
   white-space: nowrap;
   min-width: 180px;
+  max-height: 50.5px;
 }
 
 .button:hover {

@@ -46,8 +46,6 @@ export const App = () => {
     },
   });
 
-  console.log({ languages, loading });
-
   if (loading) {
     <LoadingScreen />;
   }
