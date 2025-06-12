@@ -5,6 +5,7 @@ import { shuffleArray } from "./shuffleArray";
 import { useLanguages } from "./useLanguages";
 import { useGlobalLanguages } from "./GlobalLanguagesProvider";
 import { useRotate } from "./useRotate";
+import { setUserLocale } from "../utils/userLocaleStorage";
 
 export const LangSelector: React.FC = () => {
   const rotate = useRotate();
@@ -57,7 +58,7 @@ export const LangSelector: React.FC = () => {
         className={`lang-selector ${userIdle ? "rotating" : ""}`}
         onChange={(e) => {
           const selectedLang = e.target.value;
-          localStorage.setItem("userLocale", selectedLang);
+          setUserLocale(selectedLang);
           tolgee.changeLanguage(selectedLang);
         }}
         onClick={() => {

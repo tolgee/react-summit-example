@@ -6,8 +6,9 @@ import {
   Tolgee,
 } from "@tolgee/react";
 import { FormatIcu } from "@tolgee/format-icu";
+import { getUserLocale } from "./utils/userLocaleStorage";
 
-const savedLocale = localStorage.getItem("userLocale") || undefined;
+const savedLocale = getUserLocale();
 
 const tolgee = Tolgee()
   .use(DevTools())
