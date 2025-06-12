@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode, useRef } from 'react';
 import { useTranslate } from '@tolgee/react';
-import { Language } from './useLanguages';
 
 export interface Option {
   text: string;
@@ -23,7 +22,6 @@ interface OptionsContextType {
   removeExplosion: (id: number) => void,
   addExplosions: (n: number) => void,
   hasVoted: boolean,
-  languages: Language[] | undefined,
   rotate: number | undefined,
 }
 
@@ -39,10 +37,9 @@ export const useOptions = () => {
 
 interface OptionsProviderProps {
   children: ReactNode;
-  languages: Language[] | undefined;
 }
 
-export const OptionsProvider = ({ children, languages }: OptionsProviderProps) => {
+export const OptionsProvider = ({ children }: OptionsProviderProps) => {
   const { t } = useTranslate();
   const [totalVotes, _setTotalVotes] = useState<number | undefined>(undefined);
   const [options, setOptions] = useState<Option[]>([]);
@@ -241,7 +238,6 @@ export const OptionsProvider = ({ children, languages }: OptionsProviderProps) =
     explosions,
     addExplosions,
     hasVoted: hasVoted.current,
-    languages,
     rotate: rotate ? Number(rotate) : undefined,
   };
 
@@ -279,7 +275,6 @@ export const DummyOptionsProvider = ({ children }: OptionsProviderProps) => {
     removeExplosion: () => {},
     addExplosions: () => {},
     hasVoted: false,
-    languages: undefined,
     rotate: undefined,
   };
 

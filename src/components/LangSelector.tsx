@@ -4,9 +4,11 @@ import { useTolgee } from "@tolgee/react";
 import { useOptions } from "./OptionsProvider";
 import { shuffleArray } from "./shuffleArray";
 import { useLanguages } from "./useLanguages";
+import { useGlobalLanguages } from "./GlobalLanguagesProvider";
 
 export const LangSelector: React.FC = () => {
-  const { languages: globalLanguages, rotate } = useOptions();
+  const { rotate } = useOptions();
+  const { languages: globalLanguages } = useGlobalLanguages();
   const tolgee = useTolgee(["pendingLanguage"]);
   const [userIdle, setUserIdle] = useState(false);
 

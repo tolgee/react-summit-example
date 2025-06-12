@@ -16,6 +16,7 @@ import { DevSupport } from "@react-buddy/ide-toolbox";
 import ComponentPreviews from "./dev/previews.tsx";
 import { useInitial } from "./dev/useInitial.ts";
 import { useLanguages } from "./components/useLanguages.tsx";
+import { GlobalLanguagesProvider } from "./components/GlobalLanguagesProvider";
 
 const savedLocale = localStorage.getItem("userLocale") || undefined;
 
@@ -57,20 +58,22 @@ export const App = () => {
         options={{ useSuspense: true }}
         fallback={<LoadingScreen />}
       >
-        <DummyOptionsProvider languages={languages}>
-          <DevSupport
-            ComponentPreviews={ComponentPreviews}
-            useInitialHook={useInitial}
-          >
-            <>
-              <div className="background-confetti"></div>
-              <div className="app-mouse-dev"></div>
-              <QRCode />
-              <Title />
-              <Page languages={languages} />
-            </>
-          </DevSupport>
-        </DummyOptionsProvider>
+        <GlobalLanguagesProvider languages={languages}>
+          <DummyOptionsProvider>
+            <DevSupport
+              ComponentPreviews={ComponentPreviews}
+              useInitialHook={useInitial}
+            >
+              <>
+                <div className="background-confetti"></div>
+                <div className="app-mouse-dev"></div>
+                <QRCode />
+                <Title />
+                <Page />
+              </>
+            </DevSupport>
+          </DummyOptionsProvider>
+        </GlobalLanguagesProvider>
       </TolgeeProvider>
     </>
   );
