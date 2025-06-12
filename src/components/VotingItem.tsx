@@ -69,7 +69,7 @@ export const VotingItem = ({ option, selected, onSelect }: VotingItemProps) => {
           <div
             className="result-bar"
             style={{
-              width: `${totalVotes > 0 ? (option.votes / totalVotes) * 100 : 0}%`,
+              width: `${totalVotes ?? 0 > 0 ? (option.votes / (totalVotes ?? 1)) * 100 : 0}%`,
             }}
           ></div>
         </div>
