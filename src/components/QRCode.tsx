@@ -1,5 +1,6 @@
 import { QRCodeSVG } from 'qrcode.react';
 import { useEffect, useRef, useState } from 'react';
+import {T} from "@tolgee/react";
 
 export const QRCode = () => {
   const appUrl = import.meta.env.VITE_APP_URL || window.location.href;
@@ -23,6 +24,9 @@ export const QRCode = () => {
 
   return (
     <div className="qr-code-container">
+      <span className="qr-code-label">
+      <T keyName="scan-this-qr-to-join"/>
+        </span>
       <div className="qr-code" ref={containerRef}>
         <QRCodeSVG value={appUrl} size={qrSize} />
       </div>
