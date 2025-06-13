@@ -27,6 +27,7 @@ export const Voting = () => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [enterRaffle, setEnterRaffle] = useState(false);
 
   // Set initial selected option based on user's previous vote
   useEffect(() => {
@@ -40,7 +41,11 @@ export const Voting = () => {
 
     if (!selectedOption) return;
 
-    if (await submitVote(selectedOption, email, name)) {
+    // Only include email and name if enterRaffle is checked
+    const emailToSubmit = enterRaffle ? email : undefined;
+    const nameToSubmit = enterRaffle ? name : undefined;
+
+    if (await submitVote(selectedOption, emailToSubmit, nameToSubmit)) {
       setShowSuccessPopup(true);
       setTimeout(() => setShowSuccessPopup(false), 3000);
     }
@@ -80,53 +85,54 @@ export const Voting = () => {
 
       {!hasVoted ? (
         <form className="voting-form" onSubmit={onVote}>
-          <div className="inputs-container">
-            <div className="input-field">
-              <label htmlFor="email">
-                <T keyName="email-label">Email</T>
-              </label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={t({
-                  key: "email-placeholder",
-                  defaultValue: "your@email.com (optional)",
-                })}
-              />
-            </div>
-            <div className="input-field">
-              <label htmlFor="name">
-                <T keyName="name-label">Name</T>
-              </label>
-              <input
-                type="text"
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder={t({
-                  key: "name-placeholder",
-                  defaultValue: "Your name (optional)",
-                })}
-              />
-            </div>
+          <div className="raffle-checkbox">
+            <input
+              type="checkbox"
+              id="enterRaffle"
+              checked={enterRaffle}
+              onChange={(e) => setEnterRaffle(e.target.checked)}
+            />
+            <label htmlFor="enterRaffle">
+              <T keyName="enter-raffle-label">I want to enter raffle</T>
+            </label>
           </div>
-          <div className="input-hints">
-            <span>
-              <T keyName="email-hint-1">
-                We’ll use your email to let you know if you win the raffle!
-                Plus, everyone who enters will get a discount code for the
-                Tolgee Cloud plan.
-              </T>
-            </span>
-            <span>
-              <T keyName="email-hint-2">
-                Not into sharing your email? No worries — you can still vote,
-                but you won’t be entered into the raffle.
-              </T>
-            </span>
-          </div>
+
+          {enterRaffle && (
+            <div className="inputs-container">
+              <div className="input-field">
+                <label htmlFor="email">
+                  <T keyName="email-label">Email</T>
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  placeholder={t({
+                    key: "email-placeholder",
+                    defaultValue: "your@email.com",
+                  })}
+                />
+              </div>
+              <div className="input-field">
+                <label htmlFor="name">
+                  <T keyName="name-label">Name</T>
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  placeholder={t({
+                    key: "name-placeholder",
+                    defaultValue: "Your name",
+                  })}
+                />
+              </div>
+            </div>
+          )}
 
           <div className="buttons-container">
             <div className="button-wrapper">
