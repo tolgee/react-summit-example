@@ -7,6 +7,7 @@
   --color-secondary: #6c2eb9;
   --color-secondary-dark: #1F2D40;
   --color-secondary-dark-highlight: #344762;
+  --color-subtitle: #5d626a;
 
   --color-highlight: #FFB6CD;
   --color-highlight-dark: #F83477;
@@ -229,6 +230,13 @@ header h1 {
   color: var(--color-secondary-dark);
   margin: 32px 24px 0 24px;
   font-size: 24px;
+}
+
+.question-subtitle {
+  color: var(--color-subtitle);
+  margin: 8px 24px 0 24px;
+  font-size: 16px;
+  font-style: italic;
 }
 
 .options-list {
@@ -623,4 +631,11 @@ header h1 {
   border: 1px solid #eee;
   margin: 0;
   box-sizing: border-box;
+}
+
+.raffle-checkbox {
+  display: flex;
+  gap: 8px;
+  accent-color: rgba(var(--color-primary-rgb), 0.3);
+  color: black;
 }

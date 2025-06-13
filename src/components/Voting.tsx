@@ -27,7 +27,7 @@ export const Voting = () => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
-  const [enterRaffle, setEnterRaffle] = useState(false);
+  const [enterRaffle, setEnterRaffle] = useState(true);
 
   // Set initial selected option based on user's previous vote
   useEffect(() => {
@@ -59,9 +59,14 @@ export const Voting = () => {
       )}
       <h2 className="question">
         <T keyName="vote-question">
-          Global state: What's your coping mechanism?
+          Which one is the best?
         </T>
       </h2>
+      <div className="question-subtitle">
+        <T keyName="vote-question-subtitle">
+          Cast your vote and win a prize!
+        </T>
+      </div>
 
       {errorFetch && <div className="error-message">{errorFetch}</div>}
       {errorSubmit && <div className="error-message">{errorSubmit}</div>}
