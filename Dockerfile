@@ -1,7 +1,7 @@
 # Multi-stage build for React app and Node.js server
 
 # Stage 1: Build the React app
-FROM node:18-alpine as frontend-build
+FROM docker.io/library/node:24.2.0-alpine3.21 as frontend-build
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
@@ -20,7 +20,7 @@ ENV VITE_APP_TOLGEE_PROJECT_ID=${VITE_APP_TOLGEE_PROJECT_ID}
 RUN npm run build
 
 # Stage 2: Build the Node.js server
-FROM node:18-alpine as server-build
+FROM docker.io/library/node:24.2.0-alpine3.21 as server-build
 WORKDIR /app
 COPY server/package*.json ./
 RUN npm install
@@ -28,7 +28,7 @@ COPY server ./
 RUN npm run build
 
 # Stage 3: Production environment
-FROM node:18-alpine
+FROM docker.io/library/node:24.2.0-alpine3.21
 WORKDIR /app
 
 # Copy built server
