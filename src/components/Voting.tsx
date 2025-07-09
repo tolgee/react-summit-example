@@ -73,11 +73,11 @@ export const Voting = () => {
 
       <SuccessPopup show={showSuccessPopup} />
 
-      {options.length === 0 && !errorFetch ? (
+      {options === null && !errorFetch ? (
         <LocalLoadingComponent />
       ) : (
         <div className="options-list">
-          {options.map((option) => (
+          {options?.map((option) => (
             <VotingItem
               key={option.text}
               option={option}

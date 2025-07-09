@@ -8,7 +8,7 @@ export interface Option {
 }
 
 interface OptionsContextType {
-  options: Option[];
+  options: Option[] | null;
   totalVotes: number | undefined;
   errorFetch: string | null;
   userVote: string | null;
@@ -41,7 +41,7 @@ interface OptionsProviderProps {
 export const OptionsProvider = ({ children }: OptionsProviderProps) => {
   const { t } = useTranslate();
   const [totalVotes, _setTotalVotes] = useState<number | undefined>(undefined);
-  const [options, setOptions] = useState<Option[]>([]);
+  const [options, setOptions] = useState<Option[] | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userVote, setUserVote] = useState<string | null>(null);
   const [errorFetch, setErrorFetch] = useState<string | null>(null);
