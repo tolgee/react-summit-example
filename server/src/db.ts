@@ -142,7 +142,7 @@ export const deleteOption = async (option: string) => {
         UPDATE options
         SET deleted_at = CURRENT_TIMESTAMP
         WHERE deleted_at IS NULL AND text = ?
-    `)
+    `, [option]);
   } catch (error) {
     logger.error('Error deleting option:', error);
     throw error;

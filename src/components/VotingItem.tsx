@@ -1,6 +1,7 @@
 import {T, useTranslate} from '@tolgee/react';
 import { useOptions, Option } from './OptionsProvider';
 import { useLeaderboardMode } from './useLeaderboardMode';
+import { useAdmin } from './AdminProvider';
 
 interface VotingItemProps {
   option: Option;
@@ -16,8 +17,43 @@ export const VotingItem = ({ option, selected, onSelect }: VotingItemProps) => {
   const { t } = useTranslate();
   const { totalVotes, userVote } = useOptions();
   const leaderboard = useLeaderboardMode();
+  const { isAdmin, deleteOption } = useAdmin();
   const isUserVote = !leaderboard && userVote === option.text;
   const hasVoted = userVote !== null || leaderboard;
+
+  const handleDelete = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const confirmed = window.confirm(
+      t({
+        key: 'admin-delete-confirm',
+        defaultValue: `Are you sure you want to delete the option "${option.text}"?`
+      })
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      const success = await deleteOption(option.text);
+      if (!success) {
+        alert(
+          t({
+            key: 'admin-delete-failed',
+            defaultValue: 'Failed to delete option'
+          })
+        );
+      }
+    } catch (error) {
+      console.error('Error deleting option:', error);
+      alert(
+        t({
+          key: 'admin-delete-error',
+          defaultValue: 'Error deleting option'
+        })
+      );
+    }
+  };
 
   const punchline = t({
     key: `${option.text}-punchline`,
@@ -41,6 +77,18 @@ export const VotingItem = ({ option, selected, onSelect }: VotingItemProps) => {
       className={`option-item ${selected ? 'selected' : ''} ${isUserVote ? 'user-vote' : ''}`}
       onClick={() => onSelect(option.text)}
     >
+      {isAdmin && (
+        <button
+          className="delete-option-button"
+          onClick={handleDelete}
+          title={t({
+            key: 'admin-delete-option',
+            defaultValue: 'Delete option'
+          })}
+        >
+          X
+        </button>
+      )}
       <div className="option-row">
         <div className="option-info">
           {!hasVoted && (
