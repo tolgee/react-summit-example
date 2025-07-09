@@ -8,6 +8,14 @@ import { logger } from './logger';
 import apiRouter from './api';
 import { setupFrontend } from './frontend';
 
+const dataDir = process.env.DATA_DIR ? path.resolve(process.env.DATA_DIR) : path.join(__dirname, '../data');
+logger.info(`Using data directory: ${dataDir}`);
+
+initDb().catch(err => {
+  logger.error('Failed to initialize database:', err);
+  process.exit(1);
+});
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -16,14 +24,6 @@ app.use(express.json());
 
 const server = http.createServer(app);
 initWebSocket(server);
-
-const dataDir = process.env.DATA_DIR ? path.resolve(process.env.DATA_DIR) : path.join(__dirname, '../data');
-logger.info(`Using data directory: ${dataDir}`);
-
-initDb().catch(err => {
-  logger.error('Failed to initialize database:', err);
-  process.exit(1);
-});
 
 app.use('/api', apiRouter);
 
@@ -35,9 +35,9 @@ server.listen(PORT, () => {
 
 process.on('SIGINT', () => {
   logger.info('Shutting down server...');
-  server.close(() => {
+  server.close(async () => {
     logger.info('HTTP server closed');
-    closeDb();
+    await closeDb();
     process.exit(0);
   });
 });
