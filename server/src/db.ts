@@ -3,16 +3,6 @@ import path from 'path';
 import fs from 'fs';
 import { logger } from './logger';
 
-const options = [
-  'option-redux',
-  'option-zustand',
-  'option-jotai',
-  'option-context-api',
-  'option-mobx',
-  'option-no-global-state',
-  'option-dont-care',
-];
-
 const dataDir = process.env.DATA_DIR ? path.resolve(process.env.DATA_DIR) : path.join(__dirname, '../data');
 
 if (!fs.existsSync(dataDir)) {
@@ -55,12 +45,13 @@ export const initDb = async () => {
     await runAsync(`
       CREATE TABLE IF NOT EXISTS options (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        text TEXT NOT NULL
+        text TEXT NOT NULL,
+        deleted_at TEXT DEFAULT NULL
       ) STRICT
     `);
 
     await runAsync(`
-      CREATE UNIQUE INDEX IF NOT EXISTS options_text_unique_idx ON options (text)
+      CREATE UNIQUE INDEX IF NOT EXISTS options_text_unique_idx ON options (text, deleted_at)
     `);
 
     await runAsync(`
@@ -73,14 +64,6 @@ export const initDb = async () => {
         FOREIGN KEY (option_id) REFERENCES options (id) ON DELETE RESTRICT
       ) STRICT
     `);
-
-    for (const option of options) {
-      const exists = await getAsync('SELECT id FROM options WHERE text = ?', [option]);
-      if (!exists) {
-        await runAsync(`INSERT INTO options (text) VALUES (?)`, [option]);
-        logger.info(`Option "${option}" added to database`);
-      }
-    }
 
     logger.info('Database initialized successfully');
   } catch (error) {
@@ -95,6 +78,7 @@ export const getOptionsWithVotes = async () => {
       SELECT o.id, o.text, COUNT(v.id) as votes
       FROM options o
       LEFT JOIN votes v ON o.id = v.option_id
+      WHERE o.deleted_at IS NULL
       GROUP BY o.id
       ORDER BY votes DESC, o.id
     `);
@@ -103,6 +87,15 @@ export const getOptionsWithVotes = async () => {
     throw error;
   }
 };
+
+export const addOption = async (option: string) => {
+  const exists = await getAsync('SELECT id FROM options WHERE deleted_at IS NULL AND text = ?', [option]);
+  if (exists) {
+    throw new Error(`Option '${option}' already exists`);
+  }
+  await runAsync(`INSERT INTO options (text) VALUES (?)`, [option]);
+  logger.info(`Option "${option}" added to database`);
+}
 
 export const addVote = async (optionName: string, email?: string, name?: string) => {
   try {
