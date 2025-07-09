@@ -26,6 +26,16 @@ export const VotingItem = ({ option, selected, onSelect }: VotingItemProps) => {
   const trimmedPunchline = removeInvisibleCharacters(punchline);
   const noPunchline = trimmedPunchline.length === 0;
 
+  const imgSvg = t({
+    key: `${option.text}-img`,
+    defaultValue: '',
+    noWrap: true,
+  })
+  const imgHover = t({
+    key: `${option.text}-img`,
+    defaultValue: '',
+  }).replace(imgSvg, '')
+
   return (
     <div
       className={`option-item ${selected ? 'selected' : ''} ${isUserVote ? 'user-vote' : ''}`}
@@ -44,11 +54,11 @@ export const VotingItem = ({ option, selected, onSelect }: VotingItemProps) => {
               onChange={() => onSelect(option.text)}
             />
           )}
-          {/*<img*/}
-          {/*  src={`/img/${option.text}.svg`}*/}
-          {/*  alt={option.text}*/}
-          {/*  className="option-icon"*/}
-          {/*/>*/}
+          <img
+            src={`data:image/svg+xml;utf8,${encodeURIComponent(imgSvg)}`}
+            alt={option.text + imgHover}
+            className={`option-icon ${imgSvg.length === 0 ? 'no-icon' : ''}`}
+          />
           <label htmlFor={`option-${option.text}`} className="option-label">
             <span className="option-name">
               <T keyName={`${option.text}-name`}>
