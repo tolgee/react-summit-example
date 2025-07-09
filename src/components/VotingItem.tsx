@@ -44,11 +44,11 @@ export const VotingItem = ({ option, selected, onSelect }: VotingItemProps) => {
               onChange={() => onSelect(option.text)}
             />
           )}
-          <img
-            src={`/img/${option.text}.svg`}
-            alt={option.text}
-            className="option-icon"
-          />
+          {/*<img*/}
+          {/*  src={`/img/${option.text}.svg`}*/}
+          {/*  alt={option.text}*/}
+          {/*  className="option-icon"*/}
+          {/*/>*/}
           <label htmlFor={`option-${option.text}`} className="option-label">
             <span className="option-name">
               <T keyName={`${option.text}-name`}>
