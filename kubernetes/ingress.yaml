@@ -10,7 +10,7 @@ metadata:
     nginx.ingress.kubernetes.io/websocket-services: "vote-app"
 spec:
   rules:
-  - host: vote.tolgee.io
+  - host: battle.tolgee.io
     http:
       paths:
       - path: /
@@ -36,5 +36,5 @@ spec:
               name: http
   tls:
   - hosts:
-    - vote.tolgee.io
+    - battle.tolgee.io
     secretName: vote-tls-secret

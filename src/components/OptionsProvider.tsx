@@ -65,7 +65,8 @@ export const OptionsProvider = ({ children }: OptionsProviderProps) => {
 
     const connect = () => {
       const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const wsUrl = `${wsProtocol}//${window.location.host}/api/ws`;
+      const wsDomain = import.meta.env.VITE_APP_WS_DOMAIN || `${wsProtocol}//${window.location.host}`;
+      const wsUrl = `${wsDomain}/api/ws`;
       console.log('Connecting to WebSocket', wsUrl);
 
       ws = new WebSocket(wsUrl);

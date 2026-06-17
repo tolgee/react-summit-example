@@ -11,7 +11,7 @@ Viewer discretion is advised—code readability is substantially limited compare
 
 ## Live Demo
 
-Visit [https://vote.tolgee.io](https://vote.tolgee.io) to see the application in action.
+Visit [https://battle.tolgee.io](https://battle.tolgee.io) to see the application in action.
 
 ## Getting Started
 
@@ -41,7 +41,8 @@ Visit [https://vote.tolgee.io](https://vote.tolgee.io) to see the application in
    - Set `VITE_APP_TOLGEE_API_KEY` to your Tolgee API key
    - Set `VITE_APP_TOLGEE_PROJECT_ID` to your Tolgee project ID
    - Set `VITE_APP_TOLGEE_CDN_URL` to your Tolgee CDN url prefix
-   - Set `VITE_APP_URL` to your application URL (default: 'https://vote.tolgee.io')
+   - Set `VITE_APP_URL` to your application URL (default: 'https://battle.tolgee.io')
+   - Set `VITE_APP_WS_DOMAIN` to `protocol://domain` where your server lives (default `window.location`)
 
    Server environment variables:
    - `PORT`: Port for the server (default: 3001)
@@ -99,7 +100,7 @@ The Docker image runs the Node.js server on port 80, which serves both the API a
 
 1. Update the configuration in `kubernetes/configmap.yaml` and `kubernetes/secret.yaml`
    - The `DATA_DIR` environment variable is set to `/app/data` in the ConfigMap
-   - The `APP_URL` environment variable is set to your application URL (default: 'https://vote.tolgee.io')
+   - The `APP_URL` environment variable is set to your application URL (default: 'https://battle.tolgee.io')
    - A persistent volume is mounted at the data path
 2. Deploy to your Kubernetes cluster:
    ```
