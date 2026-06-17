@@ -1,6 +1,7 @@
 import {T, useTranslate} from '@tolgee/react';
 import { useOptions, Option } from './OptionsProvider';
 import { useLeaderboardMode } from './useLeaderboardMode';
+import { useIconEditMode } from './useIconEditMode';
 import { useAdmin } from './AdminProvider';
 
 interface VotingItemProps {
@@ -8,6 +9,8 @@ interface VotingItemProps {
   selected?: boolean;
   onSelect: (option: string) => void;
 }
+
+const EMPTY_ICON_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"></svg>';
 
 const removeInvisibleCharacters = (str: string): string => {
   return str.replace(/[\u0000-\u001F\u007F-\u009F\u200B-\u200F\u2028-\u202F\uFEFF]/g, '');
@@ -17,6 +20,7 @@ export const VotingItem = ({ option, selected, onSelect }: VotingItemProps) => {
   const { t } = useTranslate();
   const { totalVotes, userVote } = useOptions();
   const leaderboard = useLeaderboardMode();
+  const iconEdit = useIconEditMode();
   const { isAdmin, deleteOption } = useAdmin();
   const isUserVote = !leaderboard && userVote === option.text;
   const hasVoted = userVote !== null || leaderboard;
@@ -62,15 +66,22 @@ export const VotingItem = ({ option, selected, onSelect }: VotingItemProps) => {
   const trimmedPunchline = removeInvisibleCharacters(punchline);
   const noPunchline = trimmedPunchline.length === 0;
 
+  const imgKey = `${option.text}-img`;
   const imgSvg = t({
-    key: `${option.text}-img`,
+    key: imgKey,
     defaultValue: '',
     noWrap: true,
   })
-  const imgHover = t({
-    key: `${option.text}-img`,
-    defaultValue: '',
-  }).replace(imgSvg, '')
+  const isEmptyIcon = imgSvg.length === 0;
+  const showIconPlaceholder = isEmptyIcon && iconEdit;
+
+  let imgHover = '';
+  if (iconEdit) {
+    imgHover = t({
+      key: imgKey,
+      defaultValue: '',
+    }).replace(imgSvg, '')
+  }
 
   return (
     <div
@@ -103,9 +114,9 @@ export const VotingItem = ({ option, selected, onSelect }: VotingItemProps) => {
             />
           )}
           <img
-            src={`data:image/svg+xml;utf8,${encodeURIComponent(imgSvg)}`}
+            src={`data:image/svg+xml;utf8,${encodeURIComponent(showIconPlaceholder ? EMPTY_ICON_SVG : imgSvg)}`}
             alt={option.text + imgHover}
-            className={`option-icon ${imgSvg.length === 0 ? 'no-icon' : ''}`}
+            className={`option-icon ${isEmptyIcon && !iconEdit ? 'no-icon' : ''} ${showIconPlaceholder ? 'icon-edit-placeholder' : ''}`}
           />
           <label htmlFor={`option-${option.text}`} className="option-label">
             <span className="option-name">
