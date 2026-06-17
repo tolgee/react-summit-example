@@ -6,4 +6,5 @@ data:
   TOLGEE_API_URL: "https://app.tolgee.io"
   TOLGEE_PROJECT_ID: "your-project-id"
   DATA_DIR: "/app/data"
-  APP_URL: "https://vote.tolgee.io"
+  APP_URL: "https://battle.tolgee.io"
+  WS_DOMAIN: "wss://battle.tolgee.io"

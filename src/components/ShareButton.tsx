@@ -2,7 +2,7 @@ import { T, useTranslate } from '@tolgee/react';
 
 export const ShareButton = () => {
   const { t } = useTranslate();
-  const appUrl = import.meta.env.VITE_APP_URL || 'https://vote.tolgee.io';
+  const appUrl = import.meta.env.VITE_APP_URL || 'https://battle.tolgee.io';
 
   const onShare = async () => {
     try {

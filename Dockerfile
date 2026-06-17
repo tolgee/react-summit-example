@@ -7,8 +7,10 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 # Set default environment variables for the build
-ARG VITE_APP_URL=https://vote.tolgee.io
+ARG VITE_APP_URL=https://battle.tolgee.io
 ENV VITE_APP_URL=${VITE_APP_URL}
+ARG VITE_APP_WS_DOMAIN
+ENV VITE_APP_WS_DOMAIN=${VITE_APP_WS_DOMAIN}
 ARG VITE_APP_TOLGEE_API_URL
 ENV VITE_APP_TOLGEE_API_URL=${VITE_APP_TOLGEE_API_URL}
 ARG VITE_APP_TOLGEE_API_KEY

@@ -50,6 +50,11 @@ spec:
             configMapKeyRef:
               name: vote-app-config
               key: APP_URL
+        - name: VITE_APP_WS_DOMAIN
+          valueFrom:
+            configMapKeyRef:
+              name: vote-app-config
+              key: WS_DOMAIN
         - name: DATA_DIR
           valueFrom:
             configMapKeyRef:
