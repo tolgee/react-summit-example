@@ -7,6 +7,7 @@ import {
 } from "@tolgee/react";
 import { FormatIcu } from "@tolgee/format-icu";
 import { getUserLocale } from "./utils/userLocaleStorage";
+import { bindDocumentDirection } from "./utils/languageDirection";
 
 const savedLocale = getUserLocale();
 
@@ -29,5 +30,7 @@ const tolgee = Tolgee()
     availableLanguages: ["en", "cs"],
     language: savedLocale,
   });
+
+bindDocumentDirection(tolgee);
 
 export default tolgee;

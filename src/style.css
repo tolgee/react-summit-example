@@ -166,7 +166,8 @@ button img {
   border-radius: 4px;
   display: flex;
   align-items: center;
-  padding: 8px 18px 8px 12px;
+  padding-block: 8px;
+  padding-inline: 12px 18px;
   margin-top: 16px;
   font-size: 20px;
   appearance: none;
@@ -179,6 +180,10 @@ button img {
   background-position-y: 9px;
 }
 
+[dir="rtl"] .navbar .lang-selector {
+  background-position-x: 8px;
+}
+
 
 .navbar .lang-selector.rotating {
   background: transparent;
@@ -188,7 +193,7 @@ button img {
   .navbar .lang-selector {
     position: fixed;
     top: 0px;
-    right: 16px;
+    inset-inline-end: 16px;
   }
 }
 
@@ -289,7 +294,7 @@ header h1 {
 }
 
 .option-name {
-  margin-right: 0.25em;
+  margin-inline-end: 0.25em;
 }
 
 .option-punchline, .option-no-punchline {
@@ -325,7 +330,7 @@ header h1 {
 }
 
 .no-icon {
-  margin-right: -34px;
+  margin-inline-end: -34px;
   opacity: 0;
 }
 
@@ -510,7 +515,7 @@ header h1 {
 .connection-status {
   position: absolute;
   top: 10px;
-  right: 10px;
+  inset-inline-end: 10px;
   width: 12px;
   height: 12px;
   border-radius: 50%;
@@ -586,7 +591,7 @@ header h1 {
   height: 364px;
   top: calc(50% + 60px);
   transform: translateY(-50%);
-  right: 64px;
+  inset-inline-end: 64px;
   z-index: 0;
   background-image: url('/img/app-mouse-dev.svg');
   background-repeat: no-repeat;
@@ -602,7 +607,7 @@ header h1 {
 
 @media (min-width: 1954px) {
   .app-mouse-dev {
-    right: calc(50vw - 913px);
+    inset-inline-end: calc(50vw - 913px);
   }
 }
 
@@ -616,7 +621,7 @@ header h1 {
 
 .qr-code-container {
   position: fixed;
-  left: 64px;
+  inset-inline-start: 64px;
   top: calc(50% + 60px);
   transform: translateY(-50%);
   z-index: 0;
@@ -636,7 +641,7 @@ header h1 {
 
 @media (min-width: 1520px) {
   .qr-code-container {
-    left: calc(64px + 50% - 753px);
+    inset-inline-start: calc(64px + 50% - 753px);
   }
 }
 
@@ -759,7 +764,7 @@ header h1 {
 .delete-option-button {
   position: absolute;
   top: 8px;
-  right: 8px;
+  inset-inline-end: 8px;
   background-color: var(--color-primary);
   color: white;
   border: none;
